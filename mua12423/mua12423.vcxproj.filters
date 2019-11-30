@@ -21,12 +21,24 @@
     <ClCompile Include="lexer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="table.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tokens.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="lexer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="table.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

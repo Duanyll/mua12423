@@ -2,12 +2,22 @@
 //
 
 #include "lexer.h"
+#include "types.h"
+#include <iostream>
 using namespace mua;
+
+#ifdef _DEBUG
+void do_all_test() { 
+	types::test_table(); 
+	std::clog << "All tests passed." << std::endl;
+}
+#endif  // _DEBUG
+
 
 int main()
 {
 #ifdef _DEBUG
-    lexer::test_lexer();
+    do_all_test();
 #endif  // _DEBUG
 }
 

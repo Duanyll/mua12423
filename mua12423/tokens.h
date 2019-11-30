@@ -46,7 +46,7 @@ struct number : public token {
         orig_content = x;
         value = std::atof(orig_content.c_str());
     }
-    double value;
+    double value = 0;
 };
 
 struct string : public token {

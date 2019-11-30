@@ -153,10 +153,14 @@
   <ItemGroup>
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="mua12423.cpp" />
+    <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="table.h" />
     <ClInclude Include="tokens.h" />
+    <ClInclude Include="basic_types.h" />
+    <ClInclude Include="types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
