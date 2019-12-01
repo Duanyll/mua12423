@@ -164,5 +164,6 @@ void mua::lexer::test_lexer() {
             std::cout << "[" << i->get_token_name() << "] "
                       << i->get_orig_content() << std::endl;
         }
+        delete i;
     }
 }

@@ -41,5 +41,14 @@
     <ClInclude Include="types.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="library_functions.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="function.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

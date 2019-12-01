@@ -25,7 +25,10 @@ struct object {
     inline virtual object* clone() const { return new object(); }
 };
 
-class heap_object {};
+class heap_object {
+   public:
+    inline virtual ~heap_object() {}
+};
 
 template <class T, predefined_typeid id>
 struct value_object : public object {

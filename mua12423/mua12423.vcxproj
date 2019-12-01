@@ -156,11 +156,16 @@
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="function.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="library_functions.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="tokens.h" />
     <ClInclude Include="basic_types.h" />
     <ClInclude Include="types.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
