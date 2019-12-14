@@ -9,13 +9,13 @@ namespace types {
 class function : public heap_object {
    public:
     inline virtual ~function() {}
-    virtual object* invoke(std::vector<object*> params) = 0;
+    virtual object* invoke(std::vector<object*> params) const = 0;
 };
 
 class native_function1 : public function {
-   public:
     typedef std::function<object*(object*)> func_type;
-    inline object* invoke(std::vector<object*> params) {
+   public:
+    inline virtual object* invoke(std::vector<object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto result = fun(param1);
         delete param1;
@@ -28,9 +28,9 @@ class native_function1 : public function {
 };
 
 class native_function2 : public function {
-   public:
     typedef std::function<object*(object*, object*)> func_type;
-    inline object* invoke(std::vector<object*> params) {
+   public:
+    inline object* invoke(std::vector<object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto param2 = (params.size() >= 2) ? params[1]->clone() : new nil();
         auto result = fun(param1, param2);
@@ -45,13 +45,13 @@ class native_function2 : public function {
 };
 
 class native_function3 : public function {
+    typedef std::function<object*(object*, object*, object*)> func_type;
    public:
-    typedef std::function<object*(object*, object*)> func_type;
-    inline object* invoke(std::vector<object*> params) {
+    inline object* invoke(std::vector<object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto param2 = (params.size() >= 2) ? params[1]->clone() : new nil();
         auto param3 = (params.size() >= 3) ? params[2]->clone() : new nil();
-        auto result = fun(param1, param2);
+        auto result = fun(param1, param2, param3);
         delete param1;
         delete param2;
         delete param3;

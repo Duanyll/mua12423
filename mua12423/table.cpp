@@ -3,14 +3,25 @@
 #include <cassert>
 using namespace mua::types;
 
-object* mua::types::table::get(object* key) {
+object* mua::types::table::get_copy(const object* key) const {
     assert(key != nullptr);
     auto it = store.find(key);
     if (it == store.end()) return new nil();
     return it->second->clone();
 }
 
-void mua::types::table::set(object* key, object* val) {
+const object* mua::types::table::get(const object* key) const {
+    assert(key != nullptr);
+    auto it = store.find(key);
+    if (it == store.end()) return nullptr;
+    return it->second;
+}
+
+void mua::types::table::set_copy(const object* key, const object* val) {
+    set(key, val->clone());
+}
+
+void mua::types::table::set(const object* key, const object* val) {
     assert(key != nullptr);
     assert(val != nullptr);
     auto it = store.find(key);
@@ -23,7 +34,7 @@ void mua::types::table::set(object* key, object* val) {
             delete val_to_delete;
 
             if (key->get_typeid() == NUMBER && size_verified) {
-                auto id = static_cast<number*>(key)->value;
+                auto id = static_cast<const number*>(key)->value;
                 if (id == round(id) && id > 0) {
                     size_t cur = (size_t)id;
                     if (cur == last_verified_size)
@@ -34,25 +45,23 @@ void mua::types::table::set(object* key, object* val) {
             }
         } else {
             delete it->second;
-            it->second = val->clone();
+            it->second = val;
         }
     } else if (val->get_typeid() != NIL) {
         auto key_in_store = key->clone();
-        store[key_in_store] = val->clone();
+        store[key_in_store] = val;
 
         if (key->get_typeid() == NUMBER && size_verified) {
-            auto id = static_cast<number*>(key)->value;
+            auto id = static_cast<const number*>(key)->value;
             if (id == round(id) && id > 0) {
                 size_t cur = (size_t)id;
                 if (cur == last_verified_size + 1) {
                     last_verified_size++;
                     number* key_to_check = nullptr;
                     while (true) {
-                        key_to_check = new number(cur + 1);
-                        if (store.count(key_to_check) == 0) break;
+                        if (store.count(&number(cur + 1)) == 0) break;
                         cur++;
                         last_verified_size++;
-                        delete key_to_check;
                     }
                 }
             }
@@ -66,11 +75,9 @@ size_t mua::types::table::size() {
     last_verified_size = 0;
     number* key_to_check = nullptr;
     while (true) {
-        key_to_check = new number(cur + 1);
-        if (store.count(key_to_check) == 0) break;
+        if (store.count(&number(cur + 1)) == 0) break;
         cur++;
         last_verified_size++;
-        delete key_to_check;
     }
     size_verified = true;
     return last_verified_size;
@@ -85,20 +92,20 @@ void mua::types::test_table() {
     auto str2 = new string("string2");
     auto valnil = new nil();
 
-    tab.set(num1, num2);
-    tab.set(num2, num3);
-    tab.set(str1, str2);
-    tab.set(num3, str1);
+    tab.set_copy(num1, num2);
+    tab.set_copy(num2, num3);
+    tab.set_copy(str1, str2);
+    tab.set_copy(num3, str1);
     assert(tab.size() == 3);
-    assert(tab.get(str2)->equal_to(valnil));
+    assert(tab.get_copy(str2)->equal_to(valnil));
 
-    tab.set(num2, valnil);
+    tab.set_copy(num2, valnil);
     assert(tab.size() == 1);
-    assert(tab.get(num3)->equal_to(str1));
-    tab.set(num3, num1);
-    assert(tab.get(num3)->equal_to(num1));
+    assert(tab.get_copy(num3)->equal_to(str1));
+    tab.set_copy(num3, num1);
+    assert(tab.get_copy(num3)->equal_to(num1));
 
-	tab.set(num2, str1);
+	tab.set_copy(num2, str1);
     assert(tab.size() == 3);
 
 	std::clog << "Table test passed." << std::endl;

@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lexer.cpp" />
+    <ClCompile Include="library_functions.cpp" />
     <ClCompile Include="mua12423.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>

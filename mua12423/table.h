@@ -17,13 +17,15 @@ class table : public heap_object {
         }
     };
 
-    std::unordered_map<object*, object*, object_hasher, object_comp> store;
+    std::unordered_map<const object*, const object*, object_hasher, object_comp> store;
     size_t last_verified_size = 0;
     bool size_verified = false;
 
    public:
-    object* get(object* key);
-    void set(object* key, object* val);
+    object* get_copy(const object* key) const;
+    const object* get(const object* key) const;
+    void set_copy(const object* key, const object* val);
+    void set(const object* key, const object* val);
     size_t size();
 };
 
