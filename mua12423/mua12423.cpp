@@ -3,12 +3,14 @@
 
 #include "lexer.h"
 #include "types.h"
+#include "library_functions.h"
 #include <iostream>
 using namespace mua;
 
 #ifdef _DEBUG
 void do_all_test() { 
 	types::test_table(); 
+	libiary_functions::test_libirary_function();
 	std::clog << "All tests passed." << std::endl;
 }
 #endif  // _DEBUG

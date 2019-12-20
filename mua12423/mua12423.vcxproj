@@ -164,6 +164,7 @@
     <ClInclude Include="tokens.h" />
     <ClInclude Include="basic_types.h" />
     <ClInclude Include="types.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

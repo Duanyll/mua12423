@@ -1,25 +1,30 @@
 #include "library_functions.h"
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <regex>
+#include <vector>
+#include "utils.h"
 
 object* mua::libiary_functions::tonumber(const object* obj) {
     if (obj->get_typeid() == NUMBER) return obj->clone();
     if (obj->get_typeid() != STRING) return new nil();
     std::string str = (static_cast<const types::string*>(obj))->value;
-
-    if (std::regex_match(
-            str,
-            std::regex(
-                R"(^(-?(0|[1-9]\d*)?(\.\d+)?(?<=\d)(e[-+]?(0|[1-9]\d*))?|[-+]?0x[0-9a-f]+)$)",
-                std::regex::icase))) {
+    std::regex pattern_number(R"(^([+-]?\d+\.\d+)|([+-]?\d+)|([+-]?\.\d+)$)");
+    std::regex pattern_scientific(
+        R"(^[+-]?((\d+\.?\d*)|(\.\d+))[Ee][+-]?\d+$)");
+    std::regex pattern_heximal(R"(^[+-]?0[xX]([A-Fa-f0-9])+$)");
+    if (std::regex_match(str, pattern_number) ||
+        std::regex_match(str, pattern_scientific) ||
+        std::regex_match(str, pattern_heximal)) {
         return new number(std::atof(str.c_str()));
     } else {
         return new nil();
-    }
+	}
 }
 
 object* mua::libiary_functions::tostring(const object* obj) {
+    char buffer[50] = {0};
     switch (obj->get_typeid()) {
         case OBJECT:
             return new types::string("object");
@@ -30,7 +35,6 @@ object* mua::libiary_functions::tostring(const object* obj) {
                 return new types::string("false");
             }
         case NUMBER:
-            char buffer[50] = {0};
             sprintf(buffer, "%.14g", (static_cast<const number*>(obj)->value));
             return new types::string(buffer);
         case STRING:
@@ -74,7 +78,7 @@ object* mua::libiary_functions::string::sub(const object* s, const object* i,
     std::string str = static_cast<const types::string*>(s)->value;
     double start = static_cast<const number*>(i)->value;
     double end =
-        (j->get_typeid() == NIL) ? -1 : static_cast<const number*>(i)->value;
+        (j->get_typeid() == NIL) ? -1 : static_cast<const number*>(j)->value;
     if (std::round(start) != start) return new nil();
     if (std::round(end) != end) return new nil();
     int spos = (start > 0) ? (start - 1) : (str.length() + start);
@@ -104,32 +108,6 @@ object* mua::libiary_functions::table::concat(const object* t,
         delete obj;
     }
     return new types::string(res);
-}
-
-template <typename T>
-void merge_sort(int l, int r, T* arr, T* tmp,
-                const std::function<bool(T, T)>& comp) {
-    if (l >= r) return;
-    int mid = (l + r) >> 1;
-    merge_sort(l, mid, arr, tmp, comp);
-    merge_sort(mid + 1, r, arr, tmp, comp);
-    int i = l, j = mid + 1;
-    int k = l;
-    while (i <= mid && j <= r) {
-        if (comp(arr[i], arr[j])) {
-            tmp[k] = arr[i];
-            i++;
-        } else {
-            tmp[k] = arr[j];
-            j++;
-        }
-        k++;
-    }
-    while (i <= mid) tmp[k++] = arr[i++];
-    while (j <= r) tmp[k++] = arr[j++];
-    for (int i = l; i <= r; i++) {
-        arr[i] = tmp[i];
-    }
 }
 
 // 排序用比较函数与默认比较运算符不同, 必须返回一个确定的值
@@ -173,18 +151,18 @@ object* mua::libiary_functions::table::sort(const object* t,
 
     auto tab = static_cast<const table_pointer*>(t)->ptr;
     auto size = tab->size();
-    auto arr = new const object*[size + 1];
-    auto tmp = new const object*[size + 1];
+    std::vector<const object*> arr(size + 1);
+    std::vector<const object*> tmp(size + 1);
     for (size_t i = 1; i <= size; i++) {
-        arr[i] = tab->get(&number(i));
+        arr[i] = tab->get_copy(&number(i));
     }
     merge_sort(1, size, arr, tmp, comp_func);
     for (size_t i = 1; i <= size; i++) {
         tab->set(&number(i), arr[i]);
     }
 
-    delete[] arr;
-    delete[] tmp;
+
+    return new nil();
 }
 
 object* mua::libiary_functions::math::rad(const object* a) {
@@ -214,3 +192,36 @@ object* mua::libiary_functions::math::max(const object* a, const object* b) {
     return default_sort_comp(a, b) ? b->clone() : a->clone();
 }
 
+void mua::libiary_functions::test_libirary_function() {
+    assert(tonumber(&types::string("1.2345"))->equal_to(&number(1.2345)));
+    assert(tonumber(&types::string("1.2345aa"))->equal_to(&nil()));
+
+    assert(tostring(&number(1.23))->equal_to(&types::string("1.23")));
+
+	assert(string::sub(&types::string("abcdef"), &number(1), &number(3))
+               ->equal_to(&types::string("abc")));
+    assert(string::sub(&types::string("abcdef"), &number(-3), &nil())
+               ->equal_to(&types::string("def")));
+    assert(string::sub(&types::string("abcdef"), &number(2), &number(-2))
+                   ->equal_to(&types::string("bcde")));
+
+	types::table tab;
+    tab.set_copy(&number(1), &types::string("2"));
+    tab.set_copy(&number(2), &types::string("5"));
+    tab.set_copy(&number(3), &types::string("1"));
+    tab.set_copy(&number(4), &types::string("3"));
+    tab.set_copy(&number(5), &types::string("4"));
+
+	assert(table::concat(&table_pointer(&tab), &types::string(","))->equal_to(&types::string("2,5,1,3,4")));
+
+    table::sort(&table_pointer(&tab), &nil());
+    for (int i = 1; i < 5; i++) {
+        std::string a =
+            static_cast<const types::string*>(tab.get(&number(i)))->value;
+        std::string b =
+            static_cast<const types::string*>(tab.get(&number(i + 1)))->value;
+        assert(a <= b);
+	}
+
+    std::clog << "Library function test passed." << std::endl;
+}
