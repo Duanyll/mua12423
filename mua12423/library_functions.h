@@ -10,14 +10,13 @@ namespace libiary_functions {
 object* tonumber(const object* obj);
 object* tostring(const object* obj);
 object* print(const object* obj);
-namespace string {
-object* rep(const object* s, const object* n);
-object* sub(const object* s, const object* i, const object* j);
-}  // namespace string
-namespace table {
-object* concat(const object* t, const object* sep);
-object* sort(const object* t, const object* comp);
-}  // namespace table
+
+object* string_rep(const object* s, const object* n);
+object* string_sub(const object* s, const object* i, const object* j);
+
+object* table_concat(const object* t, const object* sep);
+object* table_sort(const object* t, const object* comp);
+
 namespace math {
 struct native_math_function1 : public function {
     double (*fun)(double);

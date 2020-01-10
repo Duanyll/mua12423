@@ -25,8 +25,10 @@ struct object {
     inline virtual object* clone() const { return new object(); }
 };
 
+// 堆上分配的对象, 简单进行基于引用计数的GC
 class heap_object {
    public:
+    int reference_count = 0;
     inline virtual ~heap_object() {}
 };
 
@@ -64,7 +66,11 @@ struct nil : public object {
 template <class T, predefined_typeid id>
 struct managed_pointer : public object {
     T* ptr;
-    inline constexpr managed_pointer(T* p) : ptr(p) {}
+    bool auto_delete;
+    inline constexpr managed_pointer(T* p, bool should_auto_delete = true)
+        : ptr(p), auto_delete(should_auto_delete) {
+        p->reference_count++;
+    }
     inline predefined_typeid get_typeid() const { return id; }
     inline size_t get_hashcode() const { return std::hash<T*>()(ptr); }
     inline bool equal_to(const object* b) const {
@@ -79,7 +85,11 @@ struct managed_pointer : public object {
 #endif
     }
     inline T& operator->() const { return *ptr; }
-    inline object* clone() const { return new managed_pointer<T, id>(ptr); }
+    inline object* clone() const { return new managed_pointer<T, id>(ptr, auto_delete); }
+    inline ~managed_pointer() { 
+        ptr->reference_count--; 
+        if (auto_delete && ptr->reference_count == 0) delete ptr;
+    }
 };
 }  // namespace types
 }  // namespace mua

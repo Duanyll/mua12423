@@ -151,12 +151,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="context.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="library_functions.cpp" />
     <ClCompile Include="mua12423.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ast.h" />
+    <ClInclude Include="context.h" />
     <ClInclude Include="function.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="library_functions.h" />

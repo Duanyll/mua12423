@@ -3,6 +3,7 @@
 #include <functional>
 
 #ifdef _MSC_VER
+// ÈÃ VC ±Õ×ì
 #define sprintf sprintf_s
 #endif  // _MSC_VER
 

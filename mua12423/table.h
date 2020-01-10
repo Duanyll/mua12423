@@ -27,6 +27,7 @@ class table : public heap_object {
     void set_copy(const object* key, const object* val);
     void set(const object* key, const object* val);
     size_t size();
+    ~table();
 };
 
 #ifdef _DEBUG

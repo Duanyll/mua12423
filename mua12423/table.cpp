@@ -1,6 +1,7 @@
 #include "table.h"
 #include <iostream>
 #include <cassert>
+#include <vector>
 using namespace mua::types;
 
 object* mua::types::table::get_copy(const object* key) const {
@@ -81,6 +82,18 @@ size_t mua::types::table::size() {
     }
     size_verified = true;
     return last_verified_size;
+}
+
+mua::types::table::~table() {
+    std::vector<const object*> keys;
+    keys.reserve(store.size());
+    for (auto& i : store) {
+        delete i.second;
+        keys.push_back(i.first);
+    }
+    for (auto& i : keys) {
+        delete i;
+    }
 }
 
 void mua::types::test_table() {
