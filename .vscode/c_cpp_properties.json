@@ -3,14 +3,15 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "D:/Visual Studio/VC/Tools/MSVC/14.24.28314/include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\Program Files\\LLVM\\bin\\clang.exe",
+            "compilerPath": "C://Program Files//LLVM//bin//clang.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "msvc-x64"

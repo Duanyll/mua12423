@@ -110,6 +110,8 @@ object* mua::libiary_functions::table_concat(const object* t,
     return new string(res);
 }
 
+namespace mua {
+namespace libiary_functions {
 // 排序用比较函数与默认比较运算符不同, 必须返回一个确定的值
 bool default_sort_comp(const object* a, const object* b) {
     if (a->get_typeid() == b->get_typeid()) {
@@ -127,6 +129,8 @@ bool default_sort_comp(const object* a, const object* b) {
         return a->get_typeid() < b->get_typeid();
     }
 }
+}  // namespace libiary_functions
+}  // namespace mua
 
 object* mua::libiary_functions::table_sort(const object* t,
                                             const object* comp) {
@@ -138,7 +142,7 @@ object* mua::libiary_functions::table_sort(const object* t,
     } else {
         auto fun = static_cast<const function_pointer*>(comp)->ptr;
         comp_func = [&fun](const object* a, const object* b) -> bool {
-            auto res = fun->invoke({a, b});
+            auto res = fun->invoke(nullptr, {a, b});
             if (res->equal_to(&boolean(true))) {
                 delete res;
                 return true;
@@ -156,7 +160,7 @@ object* mua::libiary_functions::table_sort(const object* t,
     for (size_t i = 1; i <= size; i++) {
         arr[i] = tab->get_copy(&number(i));
     }
-    merge_sort(1, size, arr, tmp, comp_func);
+    utils::merge_sort(1, size, arr, tmp, comp_func);
     for (size_t i = 1; i <= size; i++) {
         tab->set(&number(i), arr[i]);
     }

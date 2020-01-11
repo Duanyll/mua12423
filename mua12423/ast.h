@@ -1,6 +1,7 @@
 #pragma once
-#include "types.h"
 #include "context.h"
+#include "types.h"
+#include <memory>
 using namespace mua::types;
 using namespace mua::runtime;
 
@@ -15,6 +16,14 @@ class expr : public ast_base {
    public:
     inline virtual ~expr() {}
     virtual object* eval(runtime_context* context) = 0;
+};
+
+typedef std::shared_ptr<expr> pexpr;
+
+class lexpr : virtual public expr {
+   public:
+    inline virtual ~lexpr() {}
+    virtual void set_value(runtime_context* context, const object* val) = 0;
 };
 
 class simple_constant : public expr {
@@ -34,5 +43,56 @@ class table_constant : public expr {
         return new table_pointer(new table(), true);
     }
 };
-}
-}
+
+class varible : virtual public expr, virtual public lexpr {
+    std::string name;
+
+   public:
+    inline varible(std::string n) : name(n) {}
+    inline object* eval(runtime_context* context) {
+        return context->get_varible(name);
+    }
+    inline void set_value(runtime_context* context, const object* val) {
+        context->set_varible(name, val);
+    }
+};
+
+class member_access : virtual public expr, virtual public lexpr {
+    pexpr obj;
+    pexpr member_name;
+
+   public:
+    inline member_access(pexpr obj, pexpr member)
+        : obj(obj), member_name(member) {}
+    inline object* eval(runtime_context* context) {
+        auto u = obj->eval(context);
+        if (u->get_typeid() == TABLE) {
+            auto t = static_cast<table_pointer*>(u)->ptr;
+            auto key = member_name->eval(context);
+            auto result = t->get_copy(key);
+            delete u;
+            delete t;
+            return result;
+        } else {
+            delete u;
+            return new nil();
+        }
+    }
+    inline void set_value(runtime_context* context, const object* val) {
+        auto u = obj->eval(context);
+        if (u->get_typeid() == TABLE) {
+            auto t = static_cast<table_pointer*>(u)->ptr;
+            auto key = member_name->eval(context);
+            t->set_copy(key, val);
+            delete u;
+            delete t;
+            return;
+        } else {
+            delete u;
+            return;
+        }
+    }
+};
+
+}  // namespace ast
+}  // namespace mua

@@ -155,6 +155,7 @@
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="library_functions.cpp" />
     <ClCompile Include="mua12423.cpp" />
+    <ClCompile Include="operator.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +164,7 @@
     <ClInclude Include="function.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="library_functions.h" />
+    <ClInclude Include="operator.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="tokens.h" />
     <ClInclude Include="basic_types.h" />

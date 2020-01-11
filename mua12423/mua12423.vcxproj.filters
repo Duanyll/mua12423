@@ -30,6 +30,9 @@
     <ClCompile Include="context.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="operator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tokens.h">
@@ -60,6 +63,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="context.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="operator.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

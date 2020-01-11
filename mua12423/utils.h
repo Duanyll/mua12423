@@ -7,6 +7,9 @@
 #define sprintf sprintf_s
 #endif  // _MSC_VER
 
+namespace mua {
+namespace utils {
+
 template <typename T>
 void merge_sort(int l, int r, std::vector<T>& arr, std::vector<T>& tmp,
                 const std::function<bool(T, T)>& comp) {
@@ -32,3 +35,5 @@ void merge_sort(int l, int r, std::vector<T>& arr, std::vector<T>& tmp,
         arr[i] = tmp[i];
     }
 }
+}  // namespace utils
+}  // namespace mua

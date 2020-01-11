@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+
 #include "types.h"
 
 using namespace mua::types;
@@ -22,7 +23,8 @@ struct native_math_function1 : public function {
     double (*fun)(double);
 
    public:
-    inline virtual object* invoke(std::vector<const object*> params) const {
+    inline virtual object* invoke(runtime::runtime_context* context,
+                                  std::vector<const object*> params) const {
         if (params.size() < 1) return new nil();
         if (params[0]->get_typeid() != NUMBER) return new nil();
         double val = (static_cast<const number*>(params[0]))->value;
@@ -31,7 +33,7 @@ struct native_math_function1 : public function {
     inline native_math_function1(decltype(fun) func) : fun(func) {}
 };
 
-// 如何构造 native_math_function1 对象: 
+// 如何构造 native_math_function1 对象:
 // const native_math_function1 name(static_cast<double (*)(double)>(std::name))
 
 // 需要的 native_math_function1
@@ -50,7 +52,6 @@ object* max(const object* a, const object* b);
 #ifdef _DEBUG
 void test_libirary_function();
 #endif  // _DEBUG
-
 
 }  // namespace libiary_functions
 }  // namespace mua
