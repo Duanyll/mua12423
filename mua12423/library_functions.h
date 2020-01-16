@@ -16,10 +16,15 @@ object* string_rep(const object* s, const object* n);
 object* string_sub(const object* s, const object* i, const object* j);
 
 object* table_concat(const object* t, const object* sep);
-object* table_sort(const object* t, const object* comp);
+
+class native_sort_function : public function {
+   public:
+    virtual object* invoke(runtime::runtime_context* context,
+                           std::vector<const object*> params) const;
+};
 
 namespace math {
-struct native_math_function1 : public function {
+class native_math_function1 : public function {
     double (*fun)(double);
 
    public:

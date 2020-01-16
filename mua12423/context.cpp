@@ -6,12 +6,11 @@
 using namespace mua::libiary_functions;
 
 void mua::runtime::runtime_context::clear() {
-    for (auto& i : scopes) {
-        for (auto& j : i) {
-            delete j.second;
-        }
+    for (auto& i : stack_var) {
+        delete i.second;
     }
-    scopes.clear();
+    frames.clear();
+    captured_var.clear();
     for (auto& i : global_scope) {
         delete i.second;
     }
@@ -42,7 +41,7 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
     DEF_FUNCTION_IN_NAMESP(namesp_table, concat,
                            new native_function2(table_concat));
     DEF_FUNCTION_IN_NAMESP(namesp_table, sort,
-                           new native_function2(table_sort));
+                           new native_sort_function());
     global_scope["table"] = new table_pointer(namesp_table);
 
     auto namesp_math = new table();
@@ -71,6 +70,8 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
     DEF_MATH_FUNCTION(tan);
     namesp_math->set(&string("pi"), new number(math::pi));
     global_scope["math"] = new table_pointer(namesp_math);
+
+    frames.push_back(std::unordered_set<local_var_id>());
 }
 
 mua::runtime::runtime_context::runtime_context() { init_predefined_varibles(); }
@@ -82,47 +83,73 @@ void mua::runtime::runtime_context::reset() {
     init_predefined_varibles();
 }
 
-void mua::runtime::runtime_context::push_frame() { scopes.push_back(scope()); }
-
-void mua::runtime::runtime_context::pop_frame() {
-    assert(!scopes.empty());
-    for (auto& i : scopes.back()) {
-        delete i.second;
-    }
-    scopes.pop_back();
-}
-
-void mua::runtime::runtime_context::declare_local_varible(
+object* mua::runtime::runtime_context::get_global_varible(
     const std::string& name) {
-    auto& cur = (scopes.empty()) ? global_scope : scopes.back();
-    if (cur.find(name) != cur.end()) return;
-    cur[name] = new nil();
-}
-
-object* mua::runtime::runtime_context::get_varible(const std::string& name) {
-    for (auto it = scopes.rbegin(); it != scopes.rend(); it++) {
-        auto obj = it->find(name);
-        if (obj != it->end()) return obj->second->clone();
+    auto res = global_scope.find(name);
+    if (res != global_scope.end()) {
+        return res->second->clone();
+    } else {
+        return new nil();
     }
-    auto obj = global_scope.find(name);
-    return (obj == global_scope.end()) ? new nil() : obj->second->clone();
 }
 
-void mua::runtime::runtime_context::set_varible(const std::string& name,
-                                                const object* val) {
-    for (auto it = scopes.rbegin(); it != scopes.rend(); it++) {
-        auto obj = it->find(name);
-        if (obj != it->end()) {
-            delete obj->second;
-            (*it)[name] = val->clone();
-            return;
+void mua::runtime::runtime_context::set_global_varible(const std::string& name,
+                                                       const object* val) {
+    auto res = global_scope.find(name);
+    if (res != global_scope.end()) {
+        delete res->second;
+    }
+    if (val->get_typeid() == NIL) {
+        global_scope.erase(name);
+    } else {
+        global_scope[name] = val->clone();
+    }
+}
+
+void mua::runtime::runtime_context::declare_local_varible(local_var_id id) {
+    frames.back().insert(id);
+    stack_var[id] = new nil();
+}
+
+object* mua::runtime::runtime_context::get_local_varible(local_var_id id) {
+    return stack_var[id]->clone();
+}
+
+void mua::runtime::runtime_context::set_local_varible(local_var_id id, const object* val) {
+    delete stack_var[id];
+    stack_var[id] = val->clone();
+}
+
+void mua::runtime::runtime_context::capture_local(local_var_id id) {
+    captured_var[id]++;
+}
+
+void mua::runtime::runtime_context::decapture_local(local_var_id id) {
+    captured_var[id]--;
+    if (captured_var[id] == 0) {
+        captured_var.erase(id);
+        bool found = false;
+        for (auto i = frames.rbegin(); i != frames.rend(); i++) {
+            if (i->count(id) != 0) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            delete stack_var[id];
+            stack_var.erase(id);
         }
     }
-    auto obj = global_scope.find(name);
-    if (obj != global_scope.end()) {
-        delete obj->second;
-    }
-    global_scope[name] = val->clone();
 }
 
-size_t mua::runtime::runtime_context::get_frame_depth() { return scopes.size(); }
+void mua::runtime::runtime_context::enter_frame() {
+    frames.push_back(std::unordered_set<local_var_id>());
+}
+
+void mua::runtime::runtime_context::leave_frame() {
+    for (auto& i : frames.back()) {
+        if (captured_var.count(i) != 0) continue;
+        delete stack_var[i];
+        stack_var.erase(i);
+    }
+}

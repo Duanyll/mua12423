@@ -44,16 +44,30 @@ class table_constant : public expr {
     }
 };
 
-class varible : virtual public expr, virtual public lexpr {
+class global_varible : virtual public expr, virtual public lexpr {
     std::string name;
 
    public:
-    inline varible(std::string n) : name(n) {}
+    inline global_varible(std::string n) : name(n) {}
     inline object* eval(runtime_context* context) {
-        return context->get_varible(name);
+        return context->get_global_varible(name);
     }
     inline void set_value(runtime_context* context, const object* val) {
-        context->set_varible(name, val);
+        context->set_global_varible(name, val);
+    }
+};
+
+class local_varible : virtual public expr, virtual public lexpr {
+    std::string name;
+    local_var_id id;
+
+   public:
+    inline local_varible(local_var_id id, std::string n = "") : id(id), name(n) {}
+    inline object* eval(runtime_context* context) {
+        return context->get_local_varible(id);
+    }
+    inline void set_value(runtime_context* context, const object* val) {
+        context->set_local_varible(id, val);
     }
 };
 

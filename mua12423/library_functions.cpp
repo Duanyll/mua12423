@@ -129,20 +129,19 @@ bool default_sort_comp(const object* a, const object* b) {
         return a->get_typeid() < b->get_typeid();
     }
 }
-}  // namespace libiary_functions
-}  // namespace mua
-
-object* mua::libiary_functions::table_sort(const object* t,
-                                            const object* comp) {
+object* native_sort_function::invoke(runtime::runtime_context* context,
+                                     std::vector<const object*> params) const {
+    if (params.empty()) return new nil();
+    auto t = params[0];
     if (t->get_typeid() != TABLE) return new nil();
 
     std::function<bool(const object*, const object*)> comp_func;
-    if (comp->get_typeid() != FUNCTION) {
+    if (params.size() < 2 && params[1]->get_typeid() != FUNCTION) {
         comp_func = default_sort_comp;
     } else {
-        auto fun = static_cast<const function_pointer*>(comp)->ptr;
-        comp_func = [&fun](const object* a, const object* b) -> bool {
-            auto res = fun->invoke(nullptr, {a, b});
+        auto fun = static_cast<const function_pointer*>(params[1])->ptr;
+        comp_func = [&](const object* a, const object* b) -> bool {
+            auto res = fun->invoke(context, {a, b});
             if (res->equal_to(&boolean(true))) {
                 delete res;
                 return true;
@@ -165,9 +164,10 @@ object* mua::libiary_functions::table_sort(const object* t,
         tab->set(&number(i), arr[i]);
     }
 
-
     return new nil();
 }
+}  // namespace libiary_functions
+}  // namespace mua
 
 object* mua::libiary_functions::math::rad(const object* a) {
     if (a->get_typeid() != NUMBER) return new nil();
@@ -216,9 +216,11 @@ void mua::libiary_functions::test_libirary_function() {
     tab.set_copy(&number(4), &string("3"));
     tab.set_copy(&number(5), &string("4"));
 
-	assert(table_concat(&table_pointer(&tab, false), &string(","))->equal_to(&string("2,5,1,3,4")));
+	assert(table_concat(&table_pointer(&tab, false), &string(","))
+               ->equal_to(&string("2,5,1,3,4")));
 
-    table_sort(&table_pointer(&tab, false), &nil());
+    native_sort_function().invoke(
+            nullptr, {(object*)&table_pointer(&tab, false), (object*)&nil()});
     for (int i = 1; i < 5; i++) {
         std::string a =
             static_cast<const string*>(tab.get(&number(i)))->value;
