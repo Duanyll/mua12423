@@ -48,4 +48,10 @@ class ast_parser {
     void pop_frame();
 };
 }  // namespace parser
+
+#ifdef _DEBUG
+void test_expr(const std::string& str, const object* res);
+#endif  // _DEBUG
+
+
 }  // namespace mua

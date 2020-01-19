@@ -3,6 +3,38 @@
 #include <typeinfo>
 using namespace mua::lexer;
 
+inline token* mua::lexer::lexer::get_token(const std::string& buffer,
+                                           possible_token_type buffer_type) {
+    token* tmp = nullptr;
+    switch (buffer_type) {
+        case NAME:
+            if (tokens::reserved::is_reserved(buffer)) {
+                tmp = new tokens::reserved();
+            } else {
+                tmp = new tokens::name();
+            }
+            break;
+        case DEC:
+        case HEX:
+        case SCI:
+            tmp = new tokens::number();
+            break;
+        case SYMBOL:
+            tmp = new tokens::symbol();
+            break;
+        case COMMENT:
+            tmp = new tokens::comment();
+            break;
+        case STRING:
+            tmp = new tokens::string();
+            break;
+    }
+    if (tmp != nullptr) {
+        tmp->set_orig_content(buffer);
+    }
+    return tmp;
+}
+
 token_array mua::lexer::lexer::operator()(const std::string& input) {
     token_array ret;
     int len = input.length();
@@ -95,34 +127,10 @@ token_array mua::lexer::lexer::operator()(const std::string& input) {
                 }
                 break;
         }
-        if (!expanded || pos == len - 1) {
+        if (!expanded) {
             //拓展失败，结束当前token
-            token* tmp = nullptr;
-            switch (buffer_type) {
-                case NAME:
-                    if (tokens::reserved::is_reserved(buffer)) {
-                        tmp = new tokens::reserved();
-                    } else {
-                        tmp = new tokens::name();
-                    }
-                    break;
-                case DEC:
-                case HEX:
-                case SCI:
-                    tmp = new tokens::number();
-                    break;
-                case SYMBOL:
-                    tmp = new tokens::symbol();
-                    break;
-                case COMMENT:
-                    tmp = new tokens::comment();
-                    break;
-                case STRING:
-                    tmp = new tokens::string();
-                    break;
-            }
+            auto tmp = get_token(buffer, buffer_type);
             if (tmp != nullptr) {
-                tmp->set_orig_content(buffer);
                 ret.push_back(tmp);
             }
 
@@ -145,6 +153,12 @@ token_array mua::lexer::lexer::operator()(const std::string& input) {
             } else if (input[pos] == '\n') {
                 ret.push_back(new tokens::eol());
             }
+        }
+    }
+    if (buffer != "") {
+        auto tmp = get_token(buffer, buffer_type);
+        if (tmp != nullptr) {
+            ret.push_back(tmp);
         }
     }
     return ret;

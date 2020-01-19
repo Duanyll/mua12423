@@ -31,6 +31,9 @@ class table : public heap_object {
     void set(const object* key, const object* val);
     size_t size();
     ~table();
+
+    table(const table&) = delete;
+    table& operator=(const table&) = delete;
 };
 
 #ifdef _DEBUG

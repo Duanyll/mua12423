@@ -23,7 +23,7 @@ bool mua::parser::ast_parser::is_expr_end(const token& x) {
 }
 
 bool mua::parser::ast_parser::is_unop(const std::string& x) {
-    return x == "- (unpo)" || x == "#" || x == "not";
+    return x == "- (unop)" || x == "#" || x == "not";
 }
 
 // 从 input[start_pos] (包括) 开始尝试提取表达式, 生成 pexpr, end_pos
@@ -39,24 +39,20 @@ pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
             break;
         } else if (t == "(") {
             // 分类讨论是改变优先级还是函数调用
-            if (terms.empty() || !terms.back().is_opr) {
+            if (terms.empty() || terms.back().is_opr) {
                 terms.push_back(term(parse_expr(cur + 1, cur)));
             } else {
                 terms.push_back(term(std::make_shared<functional_call>(
                     nullptr, parse_param_list(cur + 1, cur))));
             }
-            cur++;
         } else if (t == "[") {
             terms.push_back(term("."));
             terms.push_back(term(parse_expr(cur + 1, cur)));
-            cur++;
         } else if (t == "{") {
             terms.push_back(term(parse_table(cur + 1, cur)));
-            cur++;
         } else if (is_operator(t)) {
-            // 只有前面有值的是二元运算符
-            if (t.get_orig_content == "-" && !terms.empty() &&
-                !terms.back().is_opr) {
+            if (t.get_orig_content() == "-" &&
+                (terms.empty() || terms.back().is_opr)) {
                 terms.push_back(term("- (unop)"));
             } else {
                 terms.push_back(term(t.get_orig_content()));
@@ -88,6 +84,7 @@ pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
         } else {
             assert(false);
         }
+        cur++;
     }
     end_pos = cur;
 
@@ -123,22 +120,24 @@ pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
     }
 
     // 第三趟, 解决右结合的 "^"
-    for (auto it = terms.rbegin(); it != terms.rend(); it++) {
+    auto it = terms.end();
+    do {
+        it--;
         if (it->is_opr && it->val_opr == "^") {
-            auto before = ++it;
-            it--;
-            auto after = --it;
+            auto before = --it;
             it++;
+            auto after = ++it;
+            it--;
             assert(!before->is_opr);
             assert(!after->is_opr);
             auto t = std::make_shared<opr_pow>();
             t->larg = before->val_expr;
             t->rarg = after->val_expr;
             *it = term(t);
-            terms.erase(before.base());
-            terms.erase(after.base());
+            terms.erase(before);
+            terms.erase(after);
         }
-    }
+    } while (it != terms.begin());
 
     // 用两个栈将剩下的不含括号的中缀表达式转化为后缀表达式得到 ast
     // 一元运算符的处理方法: 值入栈时检查栈顶有没有一元运算符
@@ -165,17 +164,32 @@ pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
                     // 由于此时一元运算符的优先级是最高的, 故不用考虑此时要 pop
                     // 一元运算符
                 }
+                st_opr.push(it->val_opr);
             }
         } else {
             pexpr val = it->val_expr;
             while (!st_opr.empty() && is_unop(st_opr.top())) {
                 auto opr = st_opr.top();
+                st_opr.pop();
                 auto node = make_unop(opr);
                 node->arg = val;
                 val = node;
             }
             st_expr.push(val);
         }
+    }
+    while (!st_opr.empty()) {
+        auto opr = st_opr.top();
+        assert(!is_unop(opr));
+        st_opr.pop();
+        auto right = st_expr.top();
+        st_expr.pop();
+        auto left = st_expr.top();
+        st_expr.pop();
+        auto node = make_binop(opr);
+        node->larg = left;
+        node->rarg = right;
+        st_expr.push(node);
     }
     assert(st_expr.size() == 1);
     return st_expr.top();
@@ -203,7 +217,7 @@ std::vector<pexpr> mua::parser::ast_parser::parse_param_list(size_t start_pos,
 std::shared_ptr<table_constant> mua::parser::ast_parser::parse_table(
     size_t start_pos, size_t& end_pos) {
     end_pos = start_pos;
-    return std::shared_ptr<table_constant>();
+    return std::make_shared<table_constant>();
 }
 
 void mua::parser::ast_parser::declare_local_var(const std::string& name) {
@@ -229,3 +243,16 @@ void mua::parser::ast_parser::push_frame() {
 }
 
 void mua::parser::ast_parser::pop_frame() { frames.pop_back(); }
+
+#include "library_functions.h"
+
+void mua::test_expr(const std::string& str, const object* expected_result) {
+    lexer::lexer lex;
+    parser::ast_parser p(lex(str));
+    runtime::runtime_context context;
+    size_t end_pos;
+    auto res = p.parse_expr(0, end_pos);
+    auto eval_res = res->eval(&context);
+    assert(eval_res->equal_to(expected_result));
+    delete eval_res;
+}

@@ -136,7 +136,7 @@ object* native_sort_function::invoke(runtime::runtime_context* context,
     if (t->get_typeid() != TABLE) return new nil();
 
     std::function<bool(const object*, const object*)> comp_func;
-    if (params.size() < 2 && params[1]->get_typeid() != FUNCTION) {
+    if (params.size() < 2 || params[1]->get_typeid() != FUNCTION) {
         comp_func = default_sort_comp;
     } else {
         auto fun = static_cast<const function_pointer*>(params[1])->ptr;

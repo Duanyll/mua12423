@@ -10,7 +10,7 @@ namespace mua {
 namespace runtime {
 typedef size_t local_var_id;
 class runtime_context {
-    table global_varibles;
+    table* global_varibles = nullptr;
     std::list<std::unordered_set<local_var_id>> frames;
     std::unordered_map<local_var_id, const object*> stack_var;
     std::unordered_map<local_var_id, int> captured_var;

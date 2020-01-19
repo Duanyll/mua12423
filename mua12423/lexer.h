@@ -28,6 +28,9 @@ class lexer {
         return false;
     }
 
+    token* get_token(const std::string& buffer,
+                     possible_token_type buffer_type);
+
    public:
     inline lexer() {}
     inline ~lexer() {}

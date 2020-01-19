@@ -11,7 +11,6 @@ void mua::runtime::runtime_context::clear() {
     }
     frames.clear();
     captured_var.clear();
-    global_varibles = table();
 }
 
 #define MF(name)                            \
@@ -24,7 +23,8 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
     using f2 = native_function2;
     using f3 = native_function3;
     using tp = table_pointer;
-    global_varibles = table{
+    if (global_varibles != nullptr) delete global_varibles;
+    global_varibles = new table{
         {"tonumber", new fp(new f1(tonumber))},
         {"tostring", new fp(new f1(tostring))},
         {"print", new fp(new f1(print))},
@@ -51,8 +51,8 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
                                   {"atan", MF(atan)},
                                   {"sin", MF(sin)},
                                   {"cos", MF(cos)},
-                                  {"tan", MF(tan)}})},
-        {"_G", new tp(&global_varibles, false)}};
+                                  {"tan", MF(tan)}})}};
+    global_varibles->set(&string("_G"), new tp(global_varibles, false));
 
     frames.push_back(std::unordered_set<local_var_id>());
 }
@@ -61,7 +61,10 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
 
 mua::runtime::runtime_context::runtime_context() { init_predefined_varibles(); }
 
-mua::runtime::runtime_context::~runtime_context() { clear(); }
+mua::runtime::runtime_context::~runtime_context() {
+    clear();
+    if (global_varibles != nullptr) delete global_varibles;
+}
 
 void mua::runtime::runtime_context::reset() {
     clear();
@@ -70,12 +73,12 @@ void mua::runtime::runtime_context::reset() {
 
 object* mua::runtime::runtime_context::get_global_varible(
     const std::string& name) {
-    return global_varibles.get_copy(&string(name));
+    return global_varibles->get_copy(&string(name));
 }
 
 void mua::runtime::runtime_context::set_global_varible(const std::string& name,
                                                        const object* val) {
-    global_varibles.set_copy(&string(name), val);
+    global_varibles->set_copy(&string(name), val);
 }
 
 void mua::runtime::runtime_context::declare_local_varible(local_var_id id) {

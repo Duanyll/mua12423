@@ -7,7 +7,6 @@ object* mua::ast::member_access::eval(runtime_context* context) {
         auto key = member_name->eval(context);
         auto result = t->get_copy(key);
         delete u;
-        delete t;
         return result;
     } else {
         delete u;

@@ -11,7 +11,7 @@ namespace mua {
 namespace ast {
 class ast_base {
    public:
-    virtual ~ast_base() = 0;
+    inline virtual ~ast_base() {}
 };
 
 class expr : public ast_base {
@@ -41,6 +41,7 @@ class simple_constant : public expr {
 
 class table_constant : public expr {
    public:
+    inline table_constant() {}
     inline virtual object* eval(runtime_context* context) {
         return new table_pointer(new table(), true);
     }
