@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="mua::libiary_functions::native_sort_function" Collapsed="true">
+    <Position X="5.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>library_functions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::ast_base" Collapsed="true">
+    <Position X="12.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::expr" Collapsed="true">
+    <Position X="9.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::lexpr" Collapsed="true">
+    <Position X="28" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABABAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::simple_constant" Collapsed="true">
+    <Position X="30.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAABAAAAAAAAAACAAAAAQAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::table_constant" Collapsed="true">
+    <Position X="32.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::global_varible" Collapsed="true">
+    <Position X="19.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAEABAAIAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::local_varible" Collapsed="true">
+    <Position X="18.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAggAAAAAAAAAAAAAAAAAAAAAAAEABAAAAAAAAAAAgA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::member_access" Collapsed="true">
+    <Position X="21.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgQAAAAAAAIEAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::binop" Collapsed="true">
+    <Position X="9.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::unop" Collapsed="true">
+    <Position X="19.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::simple_opr&lt;T&gt;" Collapsed="true">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_and" Collapsed="true">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_or" Collapsed="true">
+    <Position X="15.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_concat" Collapsed="true">
+    <Position X="24.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::compare_opr&lt;TNum, TStr&gt;" Collapsed="true">
+    <Position X="3.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_eq" Collapsed="true">
+    <Position X="1" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_neq" Collapsed="true">
+    <Position X="22.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_not" Collapsed="true">
+    <Position X="21.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_length" Collapsed="true">
+    <Position X="17.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::ast::opr_neg" Collapsed="true">
+    <Position X="19.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::runtime::runtime_context" Collapsed="true">
+    <Position X="36.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAEAAAFAAAAAFAAiAAQABQIkAAAAAQIAIAAAQAAAAA=</HashCode>
+      <FileName>context.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::function" Collapsed="true">
+    <Position X="9.75" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>function.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::native_function1" Collapsed="true">
+    <Position X="7.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>function.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::native_function2" Collapsed="true">
+    <Position X="9.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>function.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::native_function3" Collapsed="true">
+    <Position X="14.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>function.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::table" Collapsed="true">
+    <Position X="3" Y="14.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAABAAAAIQAQAAAAAAQgAAJAAAAAAAAAAA=</HashCode>
+      <FileName>table.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::types::heap_object" Collapsed="true">
+    <Position X="8.75" Y="13" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::lexer::lexer" Collapsed="true">
+    <Position X="35" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAEAAAAAIAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>lexer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="mua::libiary_functions::math::native_math_function1" Collapsed="true">
+    <Position X="12" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>library_functions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="mua::ast::mua_mod&lt;T&gt;" Collapsed="true">
+    <Position X="35" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::ast::mua_pow&lt;T&gt;" Collapsed="true">
+    <Position X="36.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::types::object" Collapsed="true">
+    <Position X="14.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAGAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAE=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::types::value_object&lt;T, id&gt;" Collapsed="true">
+    <Position X="14.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAEAAEAAAAAAAAAAAAAAAQCAAAAAAEAAAAAE=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::types::nil" Collapsed="true">
+    <Position X="7" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAEAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::types::managed_pointer&lt;T, id&gt;" Collapsed="true">
+    <Position X="24.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAEAAAAAAAAAAAkAAAAAAAEAAAAEAEAAEAAE=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::token" Collapsed="true">
+    <Position X="10" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAEAAAAgAAAAEAAAAAAAAACAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::reserved" Collapsed="true">
+    <Position X="3.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::number" Collapsed="true">
+    <Position X="5.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAgAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::string" Collapsed="true">
+    <Position X="7.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAgAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::symbol" Collapsed="true">
+    <Position X="10" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::name" Collapsed="true">
+    <Position X="12.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::eol" Collapsed="true">
+    <Position X="14.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="mua::lexer::tokens::comment" Collapsed="true">
+    <Position X="16.75" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>tokens.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="mua::ast::pexpr" Collapsed="true">
+    <Position X="36.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ast.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_plus" Collapsed="true">
+    <Position X="9.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_minus" Collapsed="true">
+    <Position X="12.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_mul" Collapsed="true">
+    <Position X="6.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_div" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_mod" Collapsed="true">
+    <Position X="12.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_pow" Collapsed="true">
+    <Position X="6.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_lt" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_gt" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_leq" Collapsed="true">
+    <Position X="3.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::ast::opr_geq" Collapsed="true">
+    <Position X="3.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>operator.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::runtime::local_var_id" Collapsed="true">
+    <Position X="35" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>context.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::types::boolean" Collapsed="true">
+    <Position X="11.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::types::number" Collapsed="true">
+    <Position X="14.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::types::string" Collapsed="true">
+    <Position X="17.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::types::table_pointer" Collapsed="true">
+    <Position X="24.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::types::function_pointer" Collapsed="true">
+    <Position X="24.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>types.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="mua::lexer::token_array" Collapsed="true">
+    <Position X="35" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>lexer.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="mua::types::predefined_typeid" Collapsed="true">
+    <Position X="35" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEBAgAAUAAAAAAAAAAgAAAAAI=</HashCode>
+      <FileName>basic_types.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

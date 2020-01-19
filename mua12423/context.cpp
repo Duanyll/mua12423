@@ -11,68 +11,53 @@ void mua::runtime::runtime_context::clear() {
     }
     frames.clear();
     captured_var.clear();
-    for (auto& i : global_scope) {
-        delete i.second;
-    }
+    global_varibles = table();
 }
 
-#define DEF_FUNCTION(name, type) \
-    global_scope[#name] = new function_pointer(new type(name))
-#define DEF_FUNCTION_IN_NAMESP(scope, name, obj) \
-    scope->set(&string(#name), new function_pointer(obj))
-#define DEF_MATH_FUNCTION(name)                                            \
-    namesp_math->set(&string(#name),                                       \
-                     new function_pointer(new math::native_math_function1( \
-                         static_cast<double (*)(double)>(std::name))))
+#define MF(name)                            \
+    new fp(new math::native_math_function1( \
+        static_cast<double (*)(double)>(std::name)))
 // 只在 clear 之后调用
 void mua::runtime::runtime_context::init_predefined_varibles() {
-    DEF_FUNCTION(tonumber, native_function1);
-    DEF_FUNCTION(tostring, native_function1);
-    DEF_FUNCTION(print, native_function1);
-
-    auto namesp_string = new table();
-    DEF_FUNCTION_IN_NAMESP(namesp_string, rep,
-                           new native_function2(string_rep));
-    DEF_FUNCTION_IN_NAMESP(namesp_string, sub,
-                           new native_function3(string_sub));
-    global_scope["string"] = new table_pointer(namesp_string);
-
-    auto namesp_table = new table();
-    DEF_FUNCTION_IN_NAMESP(namesp_table, concat,
-                           new native_function2(table_concat));
-    DEF_FUNCTION_IN_NAMESP(namesp_table, sort,
-                           new native_sort_function());
-    global_scope["table"] = new table_pointer(namesp_table);
-
-    auto namesp_math = new table();
-    DEF_FUNCTION_IN_NAMESP(namesp_math, atan2,
-                           new native_function2(math::atan2));
-    DEF_FUNCTION_IN_NAMESP(namesp_math, deg, new native_function1(math::deg));
-    DEF_FUNCTION_IN_NAMESP(namesp_math, rad, new native_function1(math::rad));
-    DEF_FUNCTION_IN_NAMESP(namesp_math, min, new native_function2(math::min));
-    DEF_FUNCTION_IN_NAMESP(namesp_math, max, new native_function2(math::max));
-    // 需要的 native_math_function1
-    // std::string math_functions_to_declare[] = {
-    //    "abs",  "floor", "ceil", "sqrt", "exp", "log", "log10",
-    //    "asin", "acos",  "atan", "sin",  "cos", "tan"};
-    DEF_MATH_FUNCTION(abs);
-    DEF_MATH_FUNCTION(floor);
-    DEF_MATH_FUNCTION(ceil);
-    DEF_MATH_FUNCTION(sqrt);
-    DEF_MATH_FUNCTION(exp);
-    DEF_MATH_FUNCTION(log);
-    DEF_MATH_FUNCTION(log10);
-    DEF_MATH_FUNCTION(asin);
-    DEF_MATH_FUNCTION(acos);
-    DEF_MATH_FUNCTION(atan);
-    DEF_MATH_FUNCTION(sin);
-    DEF_MATH_FUNCTION(cos);
-    DEF_MATH_FUNCTION(tan);
-    namesp_math->set(&string("pi"), new number(math::pi));
-    global_scope["math"] = new table_pointer(namesp_math);
+    using fp = function_pointer;
+    using f1 = native_function1;
+    using f2 = native_function2;
+    using f3 = native_function3;
+    using tp = table_pointer;
+    global_varibles = table{
+        {"tonumber", new fp(new f1(tonumber))},
+        {"tostring", new fp(new f1(tostring))},
+        {"print", new fp(new f1(print))},
+        {"string", new tp(new table{{"rep", new fp(new f2(string_rep))},
+                                    {"sub", new fp(new f3(string_sub))}})},
+        {"table",
+         new tp(new table{{"concat", new fp(new f2(table_concat))},
+                          {"sort", new fp(new native_sort_function())}})},
+        {"math", new tp(new table{{"atan2", new fp(new f2(math::atan2))},
+                                  {"deg", new fp(new f1(math::deg))},
+                                  {"rad", new fp(new f1(math::rad))},
+                                  {"min", new fp(new f2(math::min))},
+                                  {"max", new fp(new f2(math::max))},
+                                  {"pi", new number(math::pi)},
+                                  {"abs", MF(abs)},
+                                  {"floor", MF(floor)},
+                                  {"ceil", MF(ceil)},
+                                  {"sqrt", MF(sqrt)},
+                                  {"exp", MF(exp)},
+                                  {"log", MF(log)},
+                                  {"log10", MF(log10)},
+                                  {"asin", MF(asin)},
+                                  {"acos", MF(acos)},
+                                  {"atan", MF(atan)},
+                                  {"sin", MF(sin)},
+                                  {"cos", MF(cos)},
+                                  {"tan", MF(tan)}})},
+        {"_G", new tp(&global_varibles, false)}};
 
     frames.push_back(std::unordered_set<local_var_id>());
 }
+
+#undef MF
 
 mua::runtime::runtime_context::runtime_context() { init_predefined_varibles(); }
 
@@ -85,25 +70,12 @@ void mua::runtime::runtime_context::reset() {
 
 object* mua::runtime::runtime_context::get_global_varible(
     const std::string& name) {
-    auto res = global_scope.find(name);
-    if (res != global_scope.end()) {
-        return res->second->clone();
-    } else {
-        return new nil();
-    }
+    return global_varibles.get_copy(&string(name));
 }
 
 void mua::runtime::runtime_context::set_global_varible(const std::string& name,
                                                        const object* val) {
-    auto res = global_scope.find(name);
-    if (res != global_scope.end()) {
-        delete res->second;
-    }
-    if (val->get_typeid() == NIL) {
-        global_scope.erase(name);
-    } else {
-        global_scope[name] = val->clone();
-    }
+    global_varibles.set_copy(&string(name), val);
 }
 
 void mua::runtime::runtime_context::declare_local_varible(local_var_id id) {
@@ -115,7 +87,8 @@ object* mua::runtime::runtime_context::get_local_varible(local_var_id id) {
     return stack_var[id]->clone();
 }
 
-void mua::runtime::runtime_context::set_local_varible(local_var_id id, const object* val) {
+void mua::runtime::runtime_context::set_local_varible(local_var_id id,
+                                                      const object* val) {
     delete stack_var[id];
     stack_var[id] = val->clone();
 }

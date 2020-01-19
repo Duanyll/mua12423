@@ -5,8 +5,7 @@
 
 namespace mua {
 namespace lexer {
-using namespace tokens;
-typedef std::vector<tokens::token*> token_array;
+typedef std::vector<token*> token_array;
 
 class lexer {
    private:
@@ -21,8 +20,8 @@ class lexer {
         STRING
     };
     inline static bool is_symbol_first_char(char ch) {
-        for (int i = 0; i < tokens::symbol_count; i++) {
-            if (ch == tokens::symbols[i][0]) {
+        for (auto& i : symbols) {
+            if (ch == i[0]) {
                 return true;
             }
         }

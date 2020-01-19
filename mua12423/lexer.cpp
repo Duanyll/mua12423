@@ -56,11 +56,11 @@ token_array mua::lexer::lexer::operator()(const std::string& input) {
                 }
                 break;
             case SYMBOL:
-                for (int i = 0; i < tokens::symbol_count; i++) {
-                    if (tokens::symbols[i].length() > buffer.length() &&
+                for (auto& i : symbols) {
+                    if (i.length() > buffer.length() &&
                         buffer ==
-                            tokens::symbols[i].substr(0, buffer.length()) &&
-                        input[pos] == tokens::symbols[i][buffer.length()]) {
+                            i.substr(0, buffer.length()) &&
+                        input[pos] == i[buffer.length()]) {
                         buffer += input[pos];
                         expanded = true;
                         break;
@@ -97,7 +97,7 @@ token_array mua::lexer::lexer::operator()(const std::string& input) {
         }
         if (!expanded || pos == len - 1) {
             //拓展失败，结束当前token
-            tokens::token* tmp = nullptr;
+            token* tmp = nullptr;
             switch (buffer_type) {
                 case NAME:
                     if (tokens::reserved::is_reserved(buffer)) {

@@ -172,7 +172,7 @@ class opr_not : public unop {
    public:
     inline object* eval(runtime_context* context) {
         auto x = arg->eval(context);
-        auto res = new boolean(x->equal_to(&boolean(false)));
+        auto res = new boolean(x->equal_to(&boolean(false)) || x->get_typeid() == NIL);
         delete x;
         return res;
     }
@@ -210,8 +210,13 @@ class opr_neg : public unop {
     }
 };
 
-extern std::unordered_map<std::string, int> precedence;
-std::shared_ptr<binop> make_binop(std::string opr, pexpr larg,
-                                         pexpr rarg);
+// 不包括 ^ 运算符, 因为他是右结合的, 须单独考虑, 且优先级最高
+extern std::unordered_map<std::string, int> opr_precedence;
+extern std::unordered_map<std::string, std::function<std::shared_ptr<binop>()>>
+    binop_mapping;
+extern std::unordered_map<std::string, std::function<std::shared_ptr<unop>()>>
+    unop_mapping;
+std::shared_ptr<binop> make_binop(std::string opr);
+std::shared_ptr<unop> make_unop(std::string opr);
 }  // namespace ast
 }  // namespace mua

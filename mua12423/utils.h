@@ -1,6 +1,7 @@
 #pragma once
-#include <vector>
 #include <functional>
+#include <vector>
+#include <iostream>
 
 #ifdef _MSC_VER
 // ÈÃ VC ±Õ×ì
@@ -34,6 +35,11 @@ void merge_sort(int l, int r, std::vector<T>& arr, std::vector<T>& tmp,
     for (int i = l; i <= r; i++) {
         arr[i] = tmp[i];
     }
+}
+
+template <typename T>
+void log(T x) {
+    std::clog << "ATTENTION: " << x << std::endl;
 }
 }  // namespace utils
 }  // namespace mua

@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ast_parser.cpp" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="library_functions.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ast.h" />
+    <ClInclude Include="ast_parser.h" />
     <ClInclude Include="context.h" />
     <ClInclude Include="function.h" />
     <ClInclude Include="lexer.h" />

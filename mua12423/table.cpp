@@ -4,6 +4,13 @@
 #include <vector>
 using namespace mua::types;
 
+mua::types::table::table(
+    std::initializer_list<std::pair<std::string, const object*>> list) {
+    for (auto& i : list) {
+        set(&string(i.first), i.second);
+    }
+}
+
 object* mua::types::table::get_copy(const object* key) const {
     assert(key != nullptr);
     auto it = store.find(key);

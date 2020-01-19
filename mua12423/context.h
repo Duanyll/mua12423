@@ -3,13 +3,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "basic_types.h"
+#include "table.h"
 using namespace mua::types;
 
 namespace mua {
 namespace runtime {
 typedef size_t local_var_id;
 class runtime_context {
-    std::unordered_map<std::string, const object*> global_scope;
+    table global_varibles;
     std::list<std::unordered_set<local_var_id>> frames;
     std::unordered_map<local_var_id, const object*> stack_var;
     std::unordered_map<local_var_id, int> captured_var;

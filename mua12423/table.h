@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <initializer_list>
 #include "basic_types.h"
 
 namespace mua {
@@ -22,6 +23,8 @@ class table : public heap_object {
     bool size_verified = false;
 
    public:
+    inline table() {}
+    table(std::initializer_list<std::pair<std::string, const object*>> list);
     object* get_copy(const object* key) const;
     const object* get(const object* key) const;
     void set_copy(const object* key, const object* val);
@@ -33,7 +36,6 @@ class table : public heap_object {
 #ifdef _DEBUG
 void test_table();
 #endif  // _DEBUG
-
 
 }  // namespace types
 }  // namespace mua

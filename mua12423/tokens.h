@@ -6,16 +6,30 @@ namespace mua {
 
 namespace lexer {
 
-namespace tokens {
+enum class token_type {
+    UNKNOWN,
+    RESERVED,
+    STRING,
+    NUMBER,
+    SYMBOL,
+    NAME,
+    EOL,
+    COMMENT
+};
 
 struct token {
     inline token() {}
-    inline virtual std::string get_token_name() { return "UNKNOWN"; };
+    inline virtual std::string get_token_name() const = 0;
+    inline virtual token_type get_type() const = 0;
     inline virtual ~token() {}
 
     inline std::string get_orig_content() const { return orig_content; }
     inline virtual void set_orig_content(const std::string& str) {
         orig_content = str;
+    }
+
+    inline bool operator==(const std::string& a) const {
+        return orig_content == a;
     }
 
    protected:
@@ -26,34 +40,40 @@ const std::string reserved_names[] = {
     "and", "break",    "do",     "else", "elseif", "end",   "false",
     "for", "function", "if",     "in",   "local",  "nil",   "not",
     "or",  "repeat",   "return", "then", "true",   "until", "while"};
-const int reserved_name_count = 21;
+
+const std::string symbols[] = {"+", "-", "*",  "/",  "%",  "^", "#",  "==", "=",
+                               "<", ">", "<=", ">=", "~=", "(", ")",  "{",  "}",
+                               "[", "]", ";",  ":",  ",",  ".", "..", "..."};
+
+namespace tokens {
 
 struct reserved : public token {
-    inline std::string get_token_name() { return "RESERVED"; }
+    inline std::string get_token_name() const { return "RESERVED"; }
+    inline virtual token_type get_type() const { return token_type::RESERVED; }
     inline static bool is_reserved(std::string str) {
-        for (int i = 0; i < reserved_name_count; i++) {
-            if (str == reserved_names[i]) {
-                return true;
-            }
+        for (auto& i : reserved_names) {
+            if (i == str) return true;
         }
         return false;
     }
 };
 
 struct number : public token {
-    inline std::string get_token_name() { return "NUMBER"; }
+    inline std::string get_token_name() const { return "NUMBER"; }
+    inline virtual token_type get_type() const { return token_type::NUMBER; }
     inline void set_orig_content(const std::string& x) {
-        orig_content = x;
+        token::set_orig_content(x);
         value = std::atof(orig_content.c_str());
     }
     double value = 0;
 };
 
 struct string : public token {
-    inline std::string get_token_name() { return "STRING"; }
+    inline std::string get_token_name() const { return "STRING"; }
+    inline virtual token_type get_type() const { return token_type::STRING; }
     std::string value;
     inline void set_orig_content(const std::string& x) {
-        orig_content = x;
+        token::set_orig_content(x);
         value = "";
         for (size_t i = 1; i < orig_content.length() - 1; i++) {
             if (orig_content[i - 1] == '\\') {
@@ -82,25 +102,25 @@ struct string : public token {
     }
 };
 
-const std::string symbols[] = {"+", "-", "*",  "/",  "%",  "^", "#",  "==", "=",
-                               "<", ">", "<=", ">=", "~=", "(", ")",  "{",  "}",
-                               "[", "]", ";",  ":",  ",",  ".", "..", "..."};
-const int symbol_count = 26;
-
 struct symbol : public token {
-    inline std::string get_token_name() { return "SYMBOL"; }
+    inline virtual token_type get_type() const { return token_type::SYMBOL; }
+    inline std::string get_token_name() const { return "SYMBOL"; }
 };
 
 struct name : public token {
-    inline std::string get_token_name() { return "NAME"; }
+    inline virtual token_type get_type() const { return token_type::NAME; }
+    inline std::string get_token_name() const { return "NAME"; }
 };
 
 struct eol : public token {
-    inline std::string get_token_name() { return "EOL"; }
+    inline eol() : token() { set_orig_content("\n"); }
+    inline virtual token_type get_type() const { return token_type::EOL; }
+    inline std::string get_token_name() const { return "EOL"; }
 };
 
 struct comment : public token {
-    inline std::string get_token_name() { return "COMMENT"; }
+    inline virtual token_type get_type() const { return token_type::COMMENT; }
+    inline std::string get_token_name() const { return "COMMENT"; }
 };
 
 }  // namespace tokens
