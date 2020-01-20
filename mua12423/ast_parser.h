@@ -9,6 +9,7 @@
 #include "lexer.h"
 #include "operator.h"
 #include "utils.h"
+#include "statement.h"
 
 namespace mua {
 using namespace mua::ast;
@@ -36,6 +37,9 @@ class ast_parser {
 
    public:
     inline ast_parser(lexer::token_array in) : input(in) { push_frame(); }
+
+    pstat parse_stat(size_t start_pos, size_t& end_pos);
+
     pexpr parse_expr(size_t start_pos, size_t& end_pos);
     std::vector<pexpr> parse_param_list(size_t start_pos, size_t& end_pos);
     std::shared_ptr<table_constant> parse_table(size_t start_pos,

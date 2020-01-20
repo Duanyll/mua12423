@@ -26,6 +26,39 @@ bool mua::ast_parser::is_unop(const std::string& x) {
     return x == "- (unop)" || x == "#" || x == "not";
 }
 
+pstat mua::ast_parser::parse_stat(size_t start_pos, size_t& end_pos) {
+    size_t cur = start_pos;
+    const token& t = *input[cur];
+    if (t == "do") {
+    } else if (t == "if") {
+        // TODO: if statement
+    } else if (t == "for") {
+        // TODO: for statement
+    } else if (t == "while") {
+        // TODO: while statement
+    } else if (t == "repeat") {
+        // TODO: repeat-until statement
+    } else if (t == "local") {
+        // TODO: local varible declaration
+    } else if (t == "function") {
+        // TODO: function declaration
+    } else {
+        // 赋值和函数调用语句.
+        pexpr lval = parse_expr(cur, cur);
+        if (*input[cur] == "=") {
+            // 赋值语句
+            pexpr rval = parse_expr(cur + 1, cur);
+            end_pos = cur;
+            auto lexp = std::dynamic_pointer_cast<lexpr>(lval);
+            assert(lexp);
+            return std::make_shared<assign_statement>(lexp, rval);
+        } else {
+            end_pos = cur;
+            return std::make_shared<expr_statement>(lval);
+        }
+    }
+}
+
 // 从 input[start_pos] (包括) 开始尝试提取表达式, 生成 pexpr, end_pos
 // 指示第一个不属于当前表达式的 token 比如若当前表达式末尾是定界符, 则
 // end_pos 指向该定界符. 如果是 EOL, 则指向该 EOL.

@@ -88,7 +88,9 @@ struct managed_pointer : public object {
     inline object* clone() const { return new managed_pointer<T, id>(ptr, auto_delete); }
     inline ~managed_pointer() { 
         ptr->reference_count--; 
-        if (auto_delete && ptr->reference_count == 0) delete ptr;
+        if (auto_delete && ptr->reference_count == 0) {
+            delete ptr;
+        }
     }
 };
 }  // namespace types

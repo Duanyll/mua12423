@@ -6,6 +6,7 @@
 #include "ast_parser.h"
 #include "lexer.h"
 #include "library_functions.h"
+#include "repl.h"
 #include "types.h"
 using namespace mua;
 
@@ -24,8 +25,10 @@ void do_all_test() {
 
 int main() {
 #ifdef _DEBUG
-    do_all_test();
+    // do_all_test();
 #endif  // _DEBUG
+    solution_uva12422().run();
+    // test_lexer();
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

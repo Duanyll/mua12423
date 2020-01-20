@@ -37,9 +37,7 @@ class string_lexer {
     token_array operator()(const std::string&);
 };
 
-#ifdef _DEBUG
 void test_lexer();
-#endif
 
 }  // namespace lexer
 }  // namespace mua

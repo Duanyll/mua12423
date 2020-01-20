@@ -23,7 +23,6 @@ void mua::ast::member_access::set_value(runtime_context* context,
         auto key = member_name->eval(context);
         t->set_copy(key, val);
         delete u;
-        delete t;
         return;
     } else {
         delete u;
