@@ -16,6 +16,8 @@ void do_all_test() {
     test_expr("3+5*7/2==7 or 5 >= -3 and 2^3^2~=512", &boolean(false));
     test_expr("-math.sin(math.pi)==#{}", &boolean(false));
     test_expr("tostring(math['sin'](0))", &string("0"));
+    test_expr("(3*(5+7))^2", &number(1296));
+    std::clog << "Expression tests passed." << std::endl;
     std::clog << "All tests passed." << std::endl;
 }
 #endif  // _DEBUG

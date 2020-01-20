@@ -1,11 +1,12 @@
 #include "context.h"
 
 #include <cassert>
+#include <cmath>
 
 #include "library_functions.h"
 using namespace mua::libiary_functions;
 
-void mua::runtime::runtime_context::clear() {
+void mua::runtime_context::clear() {
     for (auto& i : stack_var) {
         delete i.second;
     }
@@ -17,7 +18,7 @@ void mua::runtime::runtime_context::clear() {
     new fp(new math::native_math_function1( \
         static_cast<double (*)(double)>(std::name)))
 // 只在 clear 之后调用
-void mua::runtime::runtime_context::init_predefined_varibles() {
+void mua::runtime_context::init_predefined_varibles() {
     using fp = function_pointer;
     using f1 = native_function1;
     using f2 = native_function2;
@@ -59,48 +60,48 @@ void mua::runtime::runtime_context::init_predefined_varibles() {
 
 #undef MF
 
-mua::runtime::runtime_context::runtime_context() { init_predefined_varibles(); }
+mua::runtime_context::runtime_context() { init_predefined_varibles(); }
 
-mua::runtime::runtime_context::~runtime_context() {
+mua::runtime_context::~runtime_context() {
     clear();
     if (global_varibles != nullptr) delete global_varibles;
 }
 
-void mua::runtime::runtime_context::reset() {
+void mua::runtime_context::reset() {
     clear();
     init_predefined_varibles();
 }
 
-object* mua::runtime::runtime_context::get_global_varible(
+object* mua::runtime_context::get_global_varible(
     const std::string& name) {
     return global_varibles->get_copy(&string(name));
 }
 
-void mua::runtime::runtime_context::set_global_varible(const std::string& name,
+void mua::runtime_context::set_global_varible(const std::string& name,
                                                        const object* val) {
     global_varibles->set_copy(&string(name), val);
 }
 
-void mua::runtime::runtime_context::declare_local_varible(local_var_id id) {
+void mua::runtime_context::declare_local_varible(local_var_id id) {
     frames.back().insert(id);
     stack_var[id] = new nil();
 }
 
-object* mua::runtime::runtime_context::get_local_varible(local_var_id id) {
+object* mua::runtime_context::get_local_varible(local_var_id id) {
     return stack_var[id]->clone();
 }
 
-void mua::runtime::runtime_context::set_local_varible(local_var_id id,
+void mua::runtime_context::set_local_varible(local_var_id id,
                                                       const object* val) {
     delete stack_var[id];
     stack_var[id] = val->clone();
 }
 
-void mua::runtime::runtime_context::capture_local(local_var_id id) {
+void mua::runtime_context::capture_local(local_var_id id) {
     captured_var[id]++;
 }
 
-void mua::runtime::runtime_context::decapture_local(local_var_id id) {
+void mua::runtime_context::decapture_local(local_var_id id) {
     captured_var[id]--;
     if (captured_var[id] == 0) {
         captured_var.erase(id);
@@ -118,11 +119,11 @@ void mua::runtime::runtime_context::decapture_local(local_var_id id) {
     }
 }
 
-void mua::runtime::runtime_context::enter_frame() {
+void mua::runtime_context::enter_frame() {
     frames.push_back(std::unordered_set<local_var_id>());
 }
 
-void mua::runtime::runtime_context::leave_frame() {
+void mua::runtime_context::leave_frame() {
     for (auto& i : frames.back()) {
         if (captured_var.count(i) != 0) continue;
         delete stack_var[i];

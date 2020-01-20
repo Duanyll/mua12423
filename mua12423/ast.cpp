@@ -1,4 +1,5 @@
 #include "ast.h"
+using namespace mua::ast;
 
 object* mua::ast::member_access::eval(runtime_context* context) {
     auto u = obj->eval(context);

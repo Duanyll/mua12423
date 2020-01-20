@@ -5,12 +5,12 @@
 #include <stack>
 using namespace mua::ast;
 
-bool mua::parser::ast_parser::is_operator(const token& x) {
+bool mua::ast_parser::is_operator(const token& x) {
     const std::string& val = x.get_orig_content();
     return opr_precedence.find(val) != opr_precedence.end();
 }
 
-bool mua::parser::ast_parser::is_expr_start(const token& x) {
+bool mua::ast_parser::is_expr_start(const token& x) {
     const std::string& val = x.get_orig_content();
     return x.get_type() == token_type::NAME ||
            x.get_type() == token_type::STRING ||
@@ -18,18 +18,18 @@ bool mua::parser::ast_parser::is_expr_start(const token& x) {
            x == "nil" || x == "(" || x == "[" || x == "{";
 }
 
-bool mua::parser::ast_parser::is_expr_end(const token& x) {
+bool mua::ast_parser::is_expr_end(const token& x) {
     return !(is_operator(x) || is_expr_start(x));
 }
 
-bool mua::parser::ast_parser::is_unop(const std::string& x) {
+bool mua::ast_parser::is_unop(const std::string& x) {
     return x == "- (unop)" || x == "#" || x == "not";
 }
 
 // 从 input[start_pos] (包括) 开始尝试提取表达式, 生成 pexpr, end_pos
 // 指示第一个不属于当前表达式的 token 比如若当前表达式末尾是定界符, 则
 // end_pos 指向该定界符. 如果是 EOL, 则指向该 EOL.
-pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
+pexpr mua::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
     // 第一步, 处理子表达式, 合并为由子表达式或操作符组成的序列
     std::list<term> terms;
     size_t cur = start_pos;
@@ -195,7 +195,7 @@ pexpr mua::parser::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
     return st_expr.top();
 }
 
-std::vector<pexpr> mua::parser::ast_parser::parse_param_list(size_t start_pos,
+std::vector<pexpr> mua::ast_parser::parse_param_list(size_t start_pos,
                                                              size_t& end_pos) {
     std::vector<pexpr> res;
     size_t cur = start_pos;
@@ -214,17 +214,17 @@ std::vector<pexpr> mua::parser::ast_parser::parse_param_list(size_t start_pos,
 }
 
 // mua 标准只要求实现空 table {}
-std::shared_ptr<table_constant> mua::parser::ast_parser::parse_table(
+std::shared_ptr<table_constant> mua::ast_parser::parse_table(
     size_t start_pos, size_t& end_pos) {
     end_pos = start_pos;
     return std::make_shared<table_constant>();
 }
 
-void mua::parser::ast_parser::declare_local_var(const std::string& name) {
+void mua::ast_parser::declare_local_var(const std::string& name) {
     frames.back()[name] = ++id_begin;
 }
 
-pexpr mua::parser::ast_parser::get_var_reference(const std::string& name) {
+pexpr mua::ast_parser::get_var_reference(const std::string& name) {
     if (frames.empty()) {
         return std::make_shared<global_varible>(name);
     } else {
@@ -238,18 +238,18 @@ pexpr mua::parser::ast_parser::get_var_reference(const std::string& name) {
     }
 }
 
-void mua::parser::ast_parser::push_frame() {
-    frames.push_back(std::unordered_map<std::string, runtime::local_var_id>());
+void mua::ast_parser::push_frame() {
+    frames.push_back(std::unordered_map<std::string, local_var_id>());
 }
 
-void mua::parser::ast_parser::pop_frame() { frames.pop_back(); }
+void mua::ast_parser::pop_frame() { frames.pop_back(); }
 
 #include "library_functions.h"
 
 void mua::test_expr(const std::string& str, const object* expected_result) {
-    lexer::lexer lex;
-    parser::ast_parser p(lex(str));
-    runtime::runtime_context context;
+    lexer::string_lexer lex;
+    ast_parser p(lex(str));
+    runtime_context context;
     size_t end_pos;
     auto res = p.parse_expr(0, end_pos);
     auto eval_res = res->eval(&context);

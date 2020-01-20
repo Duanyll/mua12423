@@ -4,8 +4,7 @@
 #include <unordered_map>
 
 #include "ast.h"
-using namespace mua::types;
-using namespace mua::runtime;
+#include "utils.h"
 
 namespace mua {
 namespace ast {
@@ -44,18 +43,8 @@ typedef simple_opr<std::minus<double>> opr_minus;
 typedef simple_opr<std::multiplies<double>> opr_mul;
 typedef simple_opr<std::divides<double>> opr_div;
 
-template <typename T>
-struct mua_mod {
-    T operator()(T a, T b) const { return a - std::floor(a / b) * b; }
-};
-
-template <typename T>
-struct mua_pow {
-    T operator()(T a, T b) const { return std::pow(a, b); }
-};
-
-typedef simple_opr<mua_mod<double>> opr_mod;
-typedef simple_opr<mua_pow<double>> opr_pow;
+typedef simple_opr<utils::mua_mod<double>> opr_mod;
+typedef simple_opr<utils::mua_pow<double>> opr_pow;
 
 class opr_and : public binop {
    public:

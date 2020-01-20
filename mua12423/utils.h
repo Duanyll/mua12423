@@ -12,6 +12,16 @@ namespace mua {
 namespace utils {
 
 template <typename T>
+struct mua_mod {
+    T operator()(T a, T b) const { return a - std::floor(a / b) * b; }
+};
+
+template <typename T>
+struct mua_pow {
+    T operator()(T a, T b) const { return std::pow(a, b); }
+};
+
+template <typename T>
 void merge_sort(int l, int r, std::vector<T>& arr, std::vector<T>& tmp,
                 const std::function<bool(T, T)>& comp) {
     if (l >= r) return;

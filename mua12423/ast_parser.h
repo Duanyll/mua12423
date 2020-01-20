@@ -9,11 +9,10 @@
 #include "lexer.h"
 #include "operator.h"
 #include "utils.h"
-using namespace mua::ast;
-using namespace mua::lexer;
 
 namespace mua {
-namespace parser {
+using namespace mua::ast;
+using namespace mua::lexer;
 class ast_parser {
     lexer::token_array input;
 
@@ -32,8 +31,8 @@ class ast_parser {
     bool is_expr_end(const token& x);
     bool is_unop(const std::string& x);
 
-    std::list<std::unordered_map<std::string, runtime::local_var_id>> frames;
-    runtime::local_var_id id_begin = 0;
+    std::list<std::unordered_map<std::string, local_var_id>> frames;
+    local_var_id id_begin = 0;
 
    public:
     inline ast_parser(lexer::token_array in) : input(in) { push_frame(); }
@@ -47,7 +46,6 @@ class ast_parser {
     void push_frame();
     void pop_frame();
 };
-}  // namespace parser
 
 #ifdef _DEBUG
 void test_expr(const std::string& str, const object* res);

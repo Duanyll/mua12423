@@ -2,12 +2,12 @@
 #include <list>
 #include <unordered_map>
 #include <unordered_set>
+
 #include "basic_types.h"
 #include "table.h"
-using namespace mua::types;
 
 namespace mua {
-namespace runtime {
+using namespace mua::types;
 typedef size_t local_var_id;
 class runtime_context {
     table* global_varibles = nullptr;
@@ -34,5 +34,4 @@ class runtime_context {
     void enter_frame();
     void leave_frame();
 };
-}
-}
+}  // namespace mua

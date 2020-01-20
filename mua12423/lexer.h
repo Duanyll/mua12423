@@ -7,7 +7,7 @@ namespace mua {
 namespace lexer {
 typedef std::vector<token*> token_array;
 
-class lexer {
+class string_lexer {
    private:
     enum possible_token_type {
         UNKNOWN,
@@ -32,8 +32,8 @@ class lexer {
                      possible_token_type buffer_type);
 
    public:
-    inline lexer() {}
-    inline ~lexer() {}
+    inline string_lexer() {}
+    inline ~string_lexer() {}
     token_array operator()(const std::string&);
 };
 

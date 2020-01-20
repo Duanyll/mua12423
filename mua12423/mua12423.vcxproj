@@ -168,6 +168,8 @@
     <ClInclude Include="lexer.h" />
     <ClInclude Include="library_functions.h" />
     <ClInclude Include="operator.h" />
+    <ClInclude Include="repl.h" />
+    <ClInclude Include="statement.h" />
     <ClInclude Include="table.h" />
     <ClInclude Include="tokens.h" />
     <ClInclude Include="basic_types.h" />

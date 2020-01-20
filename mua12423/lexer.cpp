@@ -3,7 +3,7 @@
 #include <typeinfo>
 using namespace mua::lexer;
 
-inline token* mua::lexer::lexer::get_token(const std::string& buffer,
+inline token* mua::lexer::string_lexer::get_token(const std::string& buffer,
                                            possible_token_type buffer_type) {
     token* tmp = nullptr;
     switch (buffer_type) {
@@ -35,7 +35,7 @@ inline token* mua::lexer::lexer::get_token(const std::string& buffer,
     return tmp;
 }
 
-token_array mua::lexer::lexer::operator()(const std::string& input) {
+token_array mua::lexer::string_lexer::operator()(const std::string& input) {
     token_array ret;
     int len = input.length();
     std::string buffer = "";
@@ -167,7 +167,7 @@ token_array mua::lexer::lexer::operator()(const std::string& input) {
 void mua::lexer::test_lexer() {
     std::string str;
     std::getline(std::cin, str, '\0');
-    token_array arr = lexer()(str);
+    token_array arr = string_lexer()(str);
     for (auto i : arr) {
         if (typeid(*i) == typeid(tokens::comment)) {
             continue;

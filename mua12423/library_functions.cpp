@@ -129,7 +129,7 @@ bool default_sort_comp(const object* a, const object* b) {
         return a->get_typeid() < b->get_typeid();
     }
 }
-object* native_sort_function::invoke(runtime::runtime_context* context,
+object* native_sort_function::invoke(runtime_context* context,
                                      std::vector<const object*> params) const {
     if (params.empty()) return new nil();
     auto t = params[0];

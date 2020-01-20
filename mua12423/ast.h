@@ -4,11 +4,10 @@
 #include "utils.h"
 #include <memory>
 #include <vector>
-using namespace mua::types;
-using namespace mua::runtime;
 
 namespace mua {
 namespace ast {
+using namespace mua::types;
 class ast_base {
    public:
     inline virtual ~ast_base() {}
@@ -89,31 +88,6 @@ class functional_call : public expr {
     inline functional_call(pexpr a, std::vector<pexpr> b)
         : func(a), params(b) {}
     object* eval(runtime_context* context);
-};
-
-class statement : public ast_base {
-   public:
-    virtual void eval(runtime_context* context) = 0;
-};
-
-class expr_statement : public statement {
-   public:
-    pexpr exp; 
-    inline virtual void eval(runtime_context* context) {
-        auto res = exp->eval(context);
-        delete res;
-    }
-};
-
-class assign_statement : public statement {
-   public:
-    plexpr lexp;
-    pexpr rexp;
-    inline virtual void eval(runtime_context* context) {
-        auto val = rexp->eval(context);
-        lexp->set_value(context, val);
-        delete val;
-    }
 };
 
 }  // namespace ast

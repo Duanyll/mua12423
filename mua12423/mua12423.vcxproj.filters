@@ -77,6 +77,12 @@
     <ClInclude Include="ast_parser.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="repl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="statement.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
