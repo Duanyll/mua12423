@@ -9,11 +9,20 @@
 namespace mua {
 using namespace mua::types;
 typedef size_t local_var_id;
+typedef size_t storage_id;
 class runtime_context {
     table* global_varibles = nullptr;
-    std::list<std::unordered_set<local_var_id>> frames;
-    std::unordered_map<local_var_id, const object*> stack_var;
-    std::unordered_map<local_var_id, int> captured_var;
+
+    struct varible_storge {
+        int reference_count = 1;
+        const object* obj = new nil();
+        ~varible_storge() { delete obj; }
+    };
+
+    storage_id next_sid = 0;
+
+    std::unordered_map<storage_id, varible_storge> store;
+    std::list<std::unordered_map<local_var_id, storage_id>> frames;
 
     void clear();
     void init_predefined_varibles();
@@ -26,12 +35,16 @@ class runtime_context {
     object* get_global_varible(const std::string& name);
     void set_global_varible(const std::string& name, const object* val);
 
-    void declare_local_varible(local_var_id id);
-    object* get_local_varible(local_var_id id);
-    void set_local_varible(local_var_id id, const object* val);
-    void capture_local(local_var_id id);
-    void decapture_local(local_var_id id);
-    void enter_frame();
-    void leave_frame();
+    void create_storage_reference(storage_id sid);
+    void remove_storage_reference(storage_id sid);
+
+    void push_frame();
+    storage_id get_varible_sid(local_var_id vid);
+    void add_caputured_varible(local_var_id vid, storage_id sid);
+    storage_id alloc_local_varible(local_var_id vid);
+    void pop_frame();
+
+    object* get_local_varible(local_var_id vid);
+    void set_local_varible(local_var_id vid, const object* val);
 };
 }  // namespace mua

@@ -5,13 +5,11 @@
 
 #include "library_functions.h"
 using namespace mua::libiary_functions;
+using namespace mua;
 
 void mua::runtime_context::clear() {
-    for (auto& i : stack_var) {
-        delete i.second;
-    }
+    store.clear();
     frames.clear();
-    captured_var.clear();
 }
 
 #define MF(name)                            \
@@ -55,7 +53,7 @@ void mua::runtime_context::init_predefined_varibles() {
                                   {"tan", MF(tan)}})}};
     global_varibles->set(&string("_G"), new tp(global_varibles, false));
 
-    frames.push_back(std::unordered_set<local_var_id>());
+    push_frame();
 }
 
 #undef MF
@@ -72,61 +70,65 @@ void mua::runtime_context::reset() {
     init_predefined_varibles();
 }
 
-object* mua::runtime_context::get_global_varible(
-    const std::string& name) {
+object* mua::runtime_context::get_global_varible(const std::string& name) {
     return global_varibles->get_copy(&string(name));
 }
 
 void mua::runtime_context::set_global_varible(const std::string& name,
-                                                       const object* val) {
+                                              const object* val) {
     global_varibles->set_copy(&string(name), val);
 }
 
-void mua::runtime_context::declare_local_varible(local_var_id id) {
-    frames.back().insert(id);
-    stack_var[id] = new nil();
+void mua::runtime_context::create_storage_reference(storage_id sid) {
+    store[sid].reference_count++;
 }
 
-object* mua::runtime_context::get_local_varible(local_var_id id) {
-    return stack_var[id]->clone();
-}
-
-void mua::runtime_context::set_local_varible(local_var_id id,
-                                                      const object* val) {
-    delete stack_var[id];
-    stack_var[id] = val->clone();
-}
-
-void mua::runtime_context::capture_local(local_var_id id) {
-    captured_var[id]++;
-}
-
-void mua::runtime_context::decapture_local(local_var_id id) {
-    captured_var[id]--;
-    if (captured_var[id] == 0) {
-        captured_var.erase(id);
-        bool found = false;
-        for (auto i = frames.rbegin(); i != frames.rend(); i++) {
-            if (i->count(id) != 0) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            delete stack_var[id];
-            stack_var.erase(id);
-        }
+void mua::runtime_context::remove_storage_reference(storage_id sid) {
+    auto it = store.find(sid);
+    assert(it != store.end());
+    it->second.reference_count--;
+    assert(it->second.reference_count >= 0);
+    if (it->second.reference_count == 0) {
+        delete it->second.obj;
+        store.erase(sid);
     }
 }
 
-void mua::runtime_context::enter_frame() {
-    frames.push_back(std::unordered_set<local_var_id>());
+void mua::runtime_context::push_frame() {
+    frames.push_back(std::unordered_map<local_var_id, storage_id>());
 }
 
-void mua::runtime_context::leave_frame() {
+storage_id mua::runtime_context::get_varible_sid(local_var_id vid) {
+    return frames.back()[vid];
+}
+
+void mua::runtime_context::add_caputured_varible(local_var_id vid,
+                                                 storage_id sid) {
+    frames.back().insert(vid, sid);
+    create_storage_reference(sid);
+}
+
+storage_id mua::runtime_context::alloc_local_varible(local_var_id vid) {
+    storage_id sid = next_sid++;
+    store[sid] = varible_storge();
+    frames.back().insert(vid, sid);
+    return sid;
+}
+
+void mua::runtime_context::pop_frame() {
     for (auto& i : frames.back()) {
-        if (captured_var.count(i) != 0) continue;
-        delete stack_var[i];
-        stack_var.erase(i);
+        remove_storage_reference(i.second);
     }
+    frames.pop_back();
+}
+
+object* mua::runtime_context::get_local_varible(local_var_id vid) {
+    return store[frames.back()[vid]].obj->clone();
+}
+
+void mua::runtime_context::set_local_varible(local_var_id vid,
+                                             const object* val) {
+    auto it = store.find(frames.back()[vid]);
+    delete it->second.obj;
+    it->second.obj = val->clone();
 }

@@ -4,10 +4,10 @@
 
 #include "types.h"
 
-using namespace mua::types;
 
 namespace mua {
 namespace libiary_functions {
+using namespace mua::types;
 object* tonumber(const object* obj);
 object* tostring(const object* obj);
 object* print(const object* obj);

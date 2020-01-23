@@ -158,6 +158,7 @@
     <ClCompile Include="library_functions.cpp" />
     <ClCompile Include="mua12423.cpp" />
     <ClCompile Include="operator.cpp" />
+    <ClCompile Include="statement.cpp" />
     <ClCompile Include="table.cpp" />
   </ItemGroup>
   <ItemGroup>
