@@ -282,7 +282,7 @@ void mua::ast_parser::pop_frame() { frames.pop_back(); }
 void mua::test_expr(const std::string& str, const object* expected_result) {
     lexer::string_lexer lex;
     ast_parser p(lex(str));
-    runtime_context context;
+    rt_context context;
     size_t end_pos;
     auto res = p.parse_expr(0, end_pos);
     auto eval_res = res->eval(&context);

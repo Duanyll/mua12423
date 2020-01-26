@@ -10,7 +10,7 @@ namespace mua {
 using namespace mua::types;
 typedef size_t local_var_id;
 typedef size_t storage_id;
-class runtime_context {
+class rt_context {
     table* global_varibles = nullptr;
 
     struct varible_storge {
@@ -28,8 +28,8 @@ class runtime_context {
     void init_predefined_varibles();
 
    public:
-    runtime_context();
-    ~runtime_context();
+    rt_context();
+    ~rt_context();
     void reset();
 
     object* get_global_varible(const std::string& name);
@@ -46,5 +46,8 @@ class runtime_context {
 
     object* get_local_varible(local_var_id vid);
     void set_local_varible(local_var_id vid, const object* val);
+
+    enum { normal, on_break, on_return } exec_status = normal;
+    object* return_value = nullptr;
 };
 }  // namespace mua

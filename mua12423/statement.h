@@ -9,7 +9,7 @@ namespace ast {
 
 class statement : public ast_base {
    public:
-    virtual void eval(runtime_context* context) = 0;
+    virtual void eval(rt_context* context) = 0;
 };
 
 typedef std::shared_ptr<statement> pstat;
@@ -18,10 +18,7 @@ class expr_statement : public statement {
    public:
     pexpr exp;
     inline expr_statement(pexpr x) : exp(x) {}
-    inline virtual void eval(runtime_context* context) {
-        auto res = exp->eval(context);
-        delete res;
-    }
+    virtual void eval(rt_context* context);
 };
 
 class assign_statement : public statement {
@@ -29,41 +26,39 @@ class assign_statement : public statement {
     plexpr lexp;
     pexpr rexp;
     inline assign_statement(plexpr l, pexpr r) : lexp(l), rexp(r) {}
-    inline virtual void eval(runtime_context* context) {
-        auto val = rexp->eval(context);
-        lexp->set_value(context, val);
-        delete val;
-    }
+    virtual void eval(rt_context* context);
 };
 
 class block_statement : public statement {
    public:
     std::vector<pstat> ch;
-    enum { none, break_stat, return_stat } last_stat;
+    enum { none, break_stat, return_stat } last_stat = none;
     pexpr return_value;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
+
+bool is_control_flow_true(pexpr x, rt_context* context);
 
 class if_statement : public statement {
    public:
     std::vector<pexpr> conditions;
     std::vector<pstat> stats;
     pstat else_stat;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
 class while_statement : public statement {
    public:
     pexpr condition;
     pstat ch;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
 class repeat_statement : public statement {
    public:
     pexpr condition;
     pstat ch;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
 class for_statement : public statement {
@@ -71,15 +66,15 @@ class for_statement : public statement {
     local_var_id loop_var;
     pexpr begin, step, end;
     pstat ch;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
-class range_based_for : public statement {
+class generic_for_statement : public statement {
    public:
     local_var_id loop_var;
     pexpr range;
     pstat ch;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
 class ast_function : public types::function {
@@ -87,25 +82,25 @@ class ast_function : public types::function {
     std::unordered_map<local_var_id, storage_id> captures;
     std::vector<local_var_id> param_name;
     pstat ch;
-    virtual object* invoke(runtime_context* context,
-                           std::vector<const object*> params);
-    runtime_context* binded_context;
+    rt_context* binded_context;
     ~ast_function();
+
+    virtual object* invoke(rt_context* context,
+                           std::vector<const object*> params) const;
 };
 
-class function_declaration : public statement {
+class lambda_expression : public expr {
    public:
     std::unordered_set<local_var_id> captures;
-    plexpr func_name;
     std::vector<local_var_id> param_name;
     pstat ch;
-    virtual void eval(runtime_context* context);
+    virtual object* eval(rt_context* context);
 };
 
 class varible_declaration : public statement {
    public:
     local_var_id vid;
-    virtual void eval(runtime_context* context);
+    virtual void eval(rt_context* context);
 };
 
 }  // namespace ast

@@ -5,6 +5,7 @@
 #include <regex>
 #include <vector>
 #include "utils.h"
+using namespace mua::types;
 
 object* mua::libiary_functions::tonumber(const object* obj) {
     if (obj->get_typeid() == NUMBER) return obj->clone();
@@ -46,7 +47,7 @@ object* mua::libiary_functions::tostring(const object* obj) {
         case FUNCTION:
             return new string("function");
         default:
-            return new string("");
+            return new string("object");
     }
 }
 
@@ -110,6 +111,18 @@ object* mua::libiary_functions::table_concat(const object* t,
     return new string(res);
 }
 
+object* mua::libiary_functions::pairs(const object* t) { 
+    if (t->get_typeid() != TABLE) return new nil();
+    auto val = static_cast<const table_pointer*>(t)->ptr;
+    return new iterator_pairs(val); 
+}
+
+object* mua::libiary_functions::ipairs(const object* t) {
+    if (t->get_typeid() != TABLE) return new nil();
+    auto val = static_cast<const table_pointer*>(t)->ptr;
+    return new iterator_ipairs(val);
+}
+
 namespace mua {
 namespace libiary_functions {
 // 排序用比较函数与默认比较运算符不同, 必须返回一个确定的值
@@ -129,7 +142,7 @@ bool default_sort_comp(const object* a, const object* b) {
         return a->get_typeid() < b->get_typeid();
     }
 }
-object* native_sort_function::invoke(runtime_context* context,
+object* native_sort_function::invoke(rt_context* context,
                                      std::vector<const object*> params) const {
     if (params.empty()) return new nil();
     auto t = params[0];

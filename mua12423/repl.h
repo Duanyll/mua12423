@@ -9,7 +9,7 @@ namespace mua {
 class repl {
    protected:
     lexer::string_lexer lex;
-    runtime_context context;
+    rt_context context;
 
    public:
     inline void reset() { context.reset(); }

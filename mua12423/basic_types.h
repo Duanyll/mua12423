@@ -10,7 +10,8 @@ enum predefined_typeid {
     STRING,
     NIL,
     TABLE,
-    FUNCTION
+    FUNCTION,
+    ITERATOR // 由于没有实现函数的多返回值, 使用 ITERATOR 类型处理 table 的迭代
 };
 
 struct object {

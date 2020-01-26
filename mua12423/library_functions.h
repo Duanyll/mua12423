@@ -4,7 +4,6 @@
 
 #include "types.h"
 
-
 namespace mua {
 namespace libiary_functions {
 using namespace mua::types;
@@ -17,9 +16,12 @@ object* string_sub(const object* s, const object* i, const object* j);
 
 object* table_concat(const object* t, const object* sep);
 
+object* pairs(const object* t);
+object* ipairs(const object* t);
+
 class native_sort_function : public function {
    public:
-    virtual object* invoke(runtime_context* context,
+    virtual object* invoke(rt_context* context,
                            std::vector<const object*> params) const;
 };
 
@@ -28,7 +30,7 @@ class native_math_function1 : public function {
     double (*fun)(double);
 
    public:
-    inline virtual object* invoke(runtime_context* context,
+    inline virtual object* invoke(rt_context* context,
                                   std::vector<const object*> params) const {
         if (params.size() < 1) return new nil();
         if (params[0]->get_typeid() != NUMBER) return new nil();

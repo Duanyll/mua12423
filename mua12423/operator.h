@@ -22,7 +22,7 @@ class unop : public expr {
 template <typename T>
 class simple_opr : public binop {
    public:
-    object* eval(runtime_context* context) {
+    object* eval(rt_context* context) {
         auto l = larg->eval(context);
         auto r = rarg->eval(context);
         object* res;
@@ -48,23 +48,23 @@ typedef simple_opr<utils::mua_pow<double>> opr_pow;
 
 class opr_and : public binop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_or : public binop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_concat : public binop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 template <typename TNum, typename TStr>
 class compare_opr : public binop {
    public:
-    inline object* eval(runtime_context* context) {
+    inline object* eval(rt_context* context) {
         auto l = larg->eval(context);
         auto r = rarg->eval(context);
         object* res;
@@ -92,27 +92,27 @@ COMPARE_OPR(std::greater_equal, opr_geq);
 
 class opr_eq : public binop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_neq : public binop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_not : public unop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_length : public unop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 class opr_neg : public unop {
    public:
-    object* eval(runtime_context* context);
+    object* eval(rt_context* context);
 };
 
 extern std::unordered_map<std::string, int> opr_precedence;

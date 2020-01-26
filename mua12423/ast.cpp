@@ -1,7 +1,7 @@
 #include "ast.h"
 using namespace mua::ast;
 
-object* mua::ast::member_access::eval(runtime_context* context) {
+object* mua::ast::member_access::eval(rt_context* context) {
     auto u = obj->eval(context);
     if (u->get_typeid() == TABLE) {
         auto t = static_cast<table_pointer*>(u)->ptr;
@@ -15,7 +15,7 @@ object* mua::ast::member_access::eval(runtime_context* context) {
     }
 }
 
-void mua::ast::member_access::set_value(runtime_context* context,
+void mua::ast::member_access::set_value(rt_context* context,
                                                const object* val) {
     auto u = obj->eval(context);
     if (u->get_typeid() == TABLE) {
@@ -30,7 +30,7 @@ void mua::ast::member_access::set_value(runtime_context* context,
     }
 }
 
-object* mua::ast::functional_call::eval(runtime_context* context) {
+object* mua::ast::functional_call::eval(rt_context* context) {
     auto fun = func->eval(context);
     if (fun->get_typeid() != FUNCTION) {
         utils::log("Trying to invoke a non-function object.");
