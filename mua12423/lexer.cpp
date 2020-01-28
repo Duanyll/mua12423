@@ -1,10 +1,12 @@
 #include "lexer.h"
+
 #include <iostream>
 #include <typeinfo>
 using namespace mua::lexer;
 
-inline token* mua::lexer::string_lexer::get_token(const std::string& buffer,
-                                           possible_token_type buffer_type) {
+inline token* mua::lexer::string_lexer::get_token(
+    const std::string& buffer, possible_token_type buffer_type,
+    bool need_comment) {
     token* tmp = nullptr;
     switch (buffer_type) {
         case NAME:
@@ -23,19 +25,20 @@ inline token* mua::lexer::string_lexer::get_token(const std::string& buffer,
             tmp = new tokens::symbol();
             break;
         case COMMENT:
-            tmp = new tokens::comment();
+            tmp = need_comment ? new tokens::comment() : nullptr;
             break;
         case STRING:
             tmp = new tokens::string();
             break;
     }
     if (tmp != nullptr) {
-        tmp->set_orig_content(buffer);
+        tmp->set_orig(buffer);
     }
     return tmp;
 }
 
-token_array mua::lexer::string_lexer::operator()(const std::string& input) {
+token_array mua::lexer::string_lexer::operator()(const std::string& input,
+                                                 bool reserve_comment) {
     token_array ret;
     int len = input.length();
     std::string buffer = "";
@@ -90,8 +93,7 @@ token_array mua::lexer::string_lexer::operator()(const std::string& input) {
             case SYMBOL:
                 for (auto& i : symbols) {
                     if (i.length() > buffer.length() &&
-                        buffer ==
-                            i.substr(0, buffer.length()) &&
+                        buffer == i.substr(0, buffer.length()) &&
                         input[pos] == i[buffer.length()]) {
                         buffer += input[pos];
                         expanded = true;
@@ -129,7 +131,7 @@ token_array mua::lexer::string_lexer::operator()(const std::string& input) {
         }
         if (!expanded) {
             //拓展失败，结束当前token
-            auto tmp = get_token(buffer, buffer_type);
+            auto tmp = get_token(buffer, buffer_type, reserve_comment);
             if (tmp != nullptr) {
                 ret.push_back(tmp);
             }
@@ -156,7 +158,7 @@ token_array mua::lexer::string_lexer::operator()(const std::string& input) {
         }
     }
     if (buffer != "") {
-        auto tmp = get_token(buffer, buffer_type);
+        auto tmp = get_token(buffer, buffer_type, reserve_comment);
         if (tmp != nullptr) {
             ret.push_back(tmp);
         }
@@ -175,8 +177,8 @@ void mua::lexer::test_lexer() {
         if (typeid(*i) == typeid(tokens::eol)) {
             std::cout << "[" << i->get_token_name() << "]" << std::endl;
         } else {
-            std::cout << "[" << i->get_token_name() << "] "
-                      << i->get_orig_content() << std::endl;
+            std::cout << "[" << i->get_token_name() << "] " << i->get_orig()
+                      << std::endl;
         }
         delete i;
     }

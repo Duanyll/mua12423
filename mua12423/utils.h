@@ -1,7 +1,7 @@
 #pragma once
 #include <functional>
-#include <vector>
 #include <iostream>
+#include <vector>
 
 #ifdef _MSC_VER
 // ÈÃ VC ±Õ×ì
@@ -10,7 +10,6 @@
 
 namespace mua {
 namespace utils {
-
 template <typename T>
 struct mua_mod {
     T operator()(T a, T b) const { return a - std::floor(a / b) * b; }

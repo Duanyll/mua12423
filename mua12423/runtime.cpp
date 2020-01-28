@@ -1,13 +1,12 @@
-#include "context.h"
-
 #include <cassert>
 #include <cmath>
 
 #include "library_functions.h"
+#include "runtime.h"
 using namespace mua::libiary_functions;
 using namespace mua;
 
-void mua::rt_context::clear() {
+void mua::runtime::clear() {
     store.clear();
     frames.clear();
 }
@@ -16,7 +15,7 @@ void mua::rt_context::clear() {
     new fp(new math::native_math_function1( \
         static_cast<double (*)(double)>(std::name)))
 // 只在 clear 之后调用
-void mua::rt_context::init_predefined_varibles() {
+void mua::runtime::init_predefined_varibles() {
     using fp = function_pointer;
     using f1 = native_function1;
     using f2 = native_function2;
@@ -60,32 +59,35 @@ void mua::rt_context::init_predefined_varibles() {
 
 #undef MF
 
-mua::rt_context::rt_context() { init_predefined_varibles(); }
+mua::runtime::runtime() { init_predefined_varibles(); }
 
-mua::rt_context::~rt_context() {
+mua::runtime::~runtime() {
     clear();
     if (global_varibles != nullptr) delete global_varibles;
+    for (auto& i : store) {
+        delete i.second.obj;
+    }
 }
 
-void mua::rt_context::reset() {
+void mua::runtime::reset() {
     clear();
     init_predefined_varibles();
 }
 
-object* mua::rt_context::get_global_varible(const std::string& name) {
+object* mua::runtime::get_global_varible(const std::string& name) {
     return global_varibles->get_copy(&string(name));
 }
 
-void mua::rt_context::set_global_varible(const std::string& name,
-                                         const object* val) {
+void mua::runtime::set_global_varible(const std::string& name,
+                                      const object* val) {
     global_varibles->set_copy(&string(name), val);
 }
 
-void mua::rt_context::create_storage_reference(storage_id sid) {
+void mua::runtime::create_storage_reference(storage_id sid) {
     store[sid].reference_count++;
 }
 
-void mua::rt_context::remove_storage_reference(storage_id sid) {
+void mua::runtime::remove_storage_reference(storage_id sid) {
     auto it = store.find(sid);
     assert(it != store.end());
     it->second.reference_count--;
@@ -96,38 +98,38 @@ void mua::rt_context::remove_storage_reference(storage_id sid) {
     }
 }
 
-void mua::rt_context::push_frame() {
+void mua::runtime::push_frame() {
     frames.push_back(std::unordered_map<local_var_id, storage_id>());
 }
 
-storage_id mua::rt_context::get_varible_sid(local_var_id vid) {
+storage_id mua::runtime::get_varible_sid(local_var_id vid) {
     return frames.back()[vid];
 }
 
-void mua::rt_context::add_caputured_varible(local_var_id vid, storage_id sid) {
+void mua::runtime::add_caputured_varible(local_var_id vid, storage_id sid) {
     frames.back()[vid] = sid;
     create_storage_reference(sid);
 }
 
-storage_id mua::rt_context::alloc_local_varible(local_var_id vid) {
+storage_id mua::runtime::alloc_local_varible(local_var_id vid) {
     storage_id sid = next_sid++;
-    store[sid] = varible_storge();
+    store[sid].obj = new nil();
     frames.back()[vid] = sid;
     return sid;
 }
 
-void mua::rt_context::pop_frame() {
+void mua::runtime::pop_frame() {
     for (auto& i : frames.back()) {
         remove_storage_reference(i.second);
     }
     frames.pop_back();
 }
 
-object* mua::rt_context::get_local_varible(local_var_id vid) {
+object* mua::runtime::get_local_varible(local_var_id vid) {
     return store[frames.back()[vid]].obj->clone();
 }
 
-void mua::rt_context::set_local_varible(local_var_id vid, const object* val) {
+void mua::runtime::set_local_varible(local_var_id vid, const object* val) {
     auto it = store.find(frames.back()[vid]);
     delete it->second.obj;
     it->second.obj = val->clone();

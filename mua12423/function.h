@@ -4,14 +4,14 @@
 #include <vector>
 
 #include "basic_types.h"
-#include "context.h"
+#include "runtime.h"
 
 namespace mua {
 namespace types {
 class function : public heap_object {
    public:
     inline virtual ~function() {}
-    virtual object* invoke(rt_context* context,
+    virtual object* invoke(runtime* rt,
                            std::vector<const object*> params) const = 0;
 };
 
@@ -21,7 +21,7 @@ class native_function1 : public function {
     typedef std::function<object*(object*)> func_type;
 
    public:
-    inline virtual object* invoke(rt_context* context,
+    inline virtual object* invoke(runtime* rt,
                                   std::vector<const object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto result = fun(param1);
@@ -38,7 +38,7 @@ class native_function2 : public function {
     typedef std::function<object*(object*, object*)> func_type;
 
    public:
-    inline object* invoke(rt_context* context,
+    inline object* invoke(runtime* rt,
                           std::vector<const object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto param2 = (params.size() >= 2) ? params[1]->clone() : new nil();
@@ -57,7 +57,7 @@ class native_function3 : public function {
     typedef std::function<object*(object*, object*, object*)> func_type;
 
    public:
-    inline object* invoke(rt_context* context,
+    inline object* invoke(runtime* rt,
                           std::vector<const object*> params) const {
         auto param1 = (params.size() >= 1) ? params[0]->clone() : new nil();
         auto param2 = (params.size() >= 2) ? params[1]->clone() : new nil();

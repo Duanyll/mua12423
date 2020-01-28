@@ -31,14 +31,14 @@ std::shared_ptr<unop> mua::ast::make_unop(std::string opr) {
     return unop_mapping[opr]();
 }
 
-object* mua::ast::opr_and::eval(rt_context* context) {
-    auto l = larg->eval(context);
+object* mua::ast::opr_and::eval(runtime* rt) {
+    auto l = larg->eval(rt);
     if (l->equal_to(&boolean(false))) {
         delete l;
         return new boolean(false);
     }
     delete l;
-    auto r = rarg->eval(context);
+    auto r = rarg->eval(rt);
     if (r->equal_to(&boolean(true))) {
         delete r;
         return new boolean(true);
@@ -48,14 +48,14 @@ object* mua::ast::opr_and::eval(rt_context* context) {
     }
 }
 
-object* mua::ast::opr_or::eval(rt_context* context) {
-    auto l = larg->eval(context);
+object* mua::ast::opr_or::eval(runtime* rt) {
+    auto l = larg->eval(rt);
     if (l->equal_to(&boolean(true))) {
         delete l;
         return new boolean(true);
     }
     delete l;
-    auto r = rarg->eval(context);
+    auto r = rarg->eval(rt);
     if (r->equal_to(&boolean(true))) {
         delete r;
         return new boolean(true);
@@ -65,9 +65,9 @@ object* mua::ast::opr_or::eval(rt_context* context) {
     }
 }
 
-object* mua::ast::opr_concat::eval(rt_context* context) {
-    auto l = larg->eval(context);
-    auto r = rarg->eval(context);
+object* mua::ast::opr_concat::eval(runtime* rt) {
+    auto l = larg->eval(rt);
+    auto r = rarg->eval(rt);
     object* res;
     if (l->get_typeid() == STRING && r->get_typeid() == STRING) {
         res = new string(static_cast<string*>(l)->value +
@@ -80,34 +80,34 @@ object* mua::ast::opr_concat::eval(rt_context* context) {
     return res;
 }
 
-object* mua::ast::opr_eq::eval(rt_context* context) {
-    auto l = larg->eval(context);
-    auto r = rarg->eval(context);
+object* mua::ast::opr_eq::eval(runtime* rt) {
+    auto l = larg->eval(rt);
+    auto r = rarg->eval(rt);
     object* res = new boolean(l->equal_to(r));
     delete l;
     delete r;
     return res;
 }
 
-inline object* mua::ast::opr_neq::eval(rt_context* context) {
-    auto l = larg->eval(context);
-    auto r = rarg->eval(context);
+inline object* mua::ast::opr_neq::eval(runtime* rt) {
+    auto l = larg->eval(rt);
+    auto r = rarg->eval(rt);
     object* res = new boolean(!l->equal_to(r));
     delete l;
     delete r;
     return res;
 }
 
-inline object* mua::ast::opr_not::eval(rt_context* context) {
-    auto x = arg->eval(context);
+inline object* mua::ast::opr_not::eval(runtime* rt) {
+    auto x = arg->eval(rt);
     auto res =
         new boolean(x->equal_to(&boolean(false)) || x->get_typeid() == NIL);
     delete x;
     return res;
 }
 
-object* mua::ast::opr_length::eval(rt_context* context) {
-    auto x = arg->eval(context);
+object* mua::ast::opr_length::eval(runtime* rt) {
+    auto x = arg->eval(rt);
     object* res;
     if (x->get_typeid() == STRING) {
         res = new number(static_cast<string*>(x)->value.length());
@@ -120,8 +120,8 @@ object* mua::ast::opr_length::eval(rt_context* context) {
     return res;
 }
 
-object* mua::ast::opr_neg::eval(rt_context* context) {
-    auto x = arg->eval(context);
+object* mua::ast::opr_neg::eval(runtime* rt) {
+    auto x = arg->eval(rt);
     object* res;
     if (x->get_typeid() == NUMBER) {
         res = new number(-static_cast<number*>(x)->value);

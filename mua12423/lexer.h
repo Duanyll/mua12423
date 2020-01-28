@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "tokens.h"
 
 namespace mua {
@@ -28,16 +29,15 @@ class string_lexer {
         return false;
     }
 
-    token* get_token(const std::string& buffer,
-                     possible_token_type buffer_type);
+    token* get_token(const std::string& buffer, possible_token_type buffer_type,
+                     bool need_comment);
 
    public:
     inline string_lexer() {}
     inline ~string_lexer() {}
-    token_array operator()(const std::string&);
+    token_array operator()(const std::string&, bool = true);
 };
 
 void test_lexer();
-
 }  // namespace lexer
 }  // namespace mua

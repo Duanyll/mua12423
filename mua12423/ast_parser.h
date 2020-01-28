@@ -5,11 +5,11 @@
 #include <vector>
 
 #include "ast.h"
-#include "context.h"
 #include "lexer.h"
 #include "operator.h"
-#include "utils.h"
+#include "runtime.h"
 #include "statement.h"
+#include "utils.h"
 
 namespace mua {
 using namespace mua::ast;
@@ -32,28 +32,45 @@ class ast_parser {
     bool is_expr_end(const token& x);
     bool is_unop(const std::string& x);
 
-    std::list<std::unordered_map<std::string, local_var_id>> frames;
+    typedef std::unordered_map<std::string, local_var_id> scope;
+    struct frame {
+        std::list<scope> scopes;  // 函数中第一个 scope 总是参数
+        std::unordered_set<local_var_id> captures;
+    };
+    std::list<frame> context;
     local_var_id id_begin = 0;
 
-   public:
-    inline ast_parser(lexer::token_array in) : input(in) { push_frame(); }
+    bool find_next(const std::string& name, size_t& cur);
 
+    pstat parse_block(size_t start_pos, size_t& end_pos);
+    pstat parse_if(size_t start_pos, size_t& end_pos);
+    pstat parse_for(size_t start_pos, size_t& end_pos);
+    pstat parse_while(size_t start_pos, size_t& end_pos);
+    pstat parse_repeat(size_t start_pos, size_t& end_pos);
+    pstat parse_local(size_t start_pos, size_t& end_pos);
+
+    std::pair<pexpr, plexpr> parse_function(size_t start_pos, size_t& end_pos);
+
+   public:
+    inline ast_parser(lexer::token_array in) : input(in) {
+        context.push_back(frame());
+        context.back().scopes.push_back(scope());
+    }
+
+    pstat parse_inner_block(size_t start_pos, size_t& end_pos);
     pstat parse_stat(size_t start_pos, size_t& end_pos);
 
     pexpr parse_expr(size_t start_pos, size_t& end_pos);
+    plexpr parse_lexpr(size_t start_pos, size_t& end_pos);
     std::vector<pexpr> parse_param_list(size_t start_pos, size_t& end_pos);
     std::shared_ptr<table_constant> parse_table(size_t start_pos,
                                                 size_t& end_pos);
 
-    void declare_local_var(const std::string& name);
-    pexpr get_var_reference(const std::string& name);
-    void push_frame();
-    void pop_frame();
+    local_var_id declare_local_var(const std::string& name);
+    pexpr use_var(const std::string& name);
 };
 
 #ifdef _DEBUG
 void test_expr(const std::string& str, const object* res);
 #endif  // _DEBUG
-
-
 }  // namespace mua

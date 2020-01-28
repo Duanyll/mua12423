@@ -6,82 +6,82 @@
 #include "operator.h"
 using namespace mua::types;
 
-void mua::ast::expr_statement::eval(rt_context* context) {
-    auto res = exp->eval(context);
+void mua::ast::expr_statement::eval(runtime* rt) {
+    auto res = exp->eval(rt);
     delete res;
 }
 
-void mua::ast::assign_statement::eval(rt_context* context) {
-    auto val = rexp->eval(context);
-    lexp->set_value(context, val);
+void mua::ast::assign_statement::eval(runtime* rt) {
+    auto val = rexp->eval(rt);
+    lexp->set_value(rt, val);
     delete val;
 }
 
-void mua::ast::block_statement::eval(rt_context* context) {
+void mua::ast::block_statement::eval(runtime* rt) {
     for (auto& i : ch) {
-        i->eval(context);
-        if (context->exec_status != rt_context::normal) return;
+        i->eval(rt);
+        if (rt->exec_status != runtime::normal) return;
     }
     switch (last_stat) {
         case none:
             break;
         case return_stat:
-            context->return_value =
-                return_value ? return_value->eval(context) : new nil();
-            context->exec_status = rt_context::on_return;
+            rt->return_value =
+                return_value ? return_value->eval(rt) : new nil();
+            rt->exec_status = runtime::on_return;
             break;
         case break_stat:
-            context->exec_status = rt_context::on_break;
+            rt->exec_status = runtime::on_break;
             break;
     }
 }
 
-bool mua::ast::is_control_flow_true(pexpr x, rt_context* context) {
-    auto val = x->eval(context);
+bool mua::ast::is_control_flow_true(pexpr x, runtime* rt) {
+    auto val = x->eval(rt);
     bool res = !(val->equal_to(&boolean(false)) || val->equal_to(&nil()));
     delete val;
     return res;
 }
 
-void mua::ast::if_statement::eval(rt_context* context) {
+void mua::ast::if_statement::eval(runtime* rt) {
     assert(conditions.size() == stats.size());
     for (size_t i = 0; i < conditions.size(); i++) {
-        if (is_control_flow_true(conditions[i], context)) {
-            stats[i]->eval(context);
+        if (is_control_flow_true(conditions[i], rt)) {
+            stats[i]->eval(rt);
             return;
         }
     }
-    else_stat->eval(context);
+    if (else_stat) else_stat->eval(rt);
 }
 
-void mua::ast::while_statement::eval(rt_context* context) {
-    while (is_control_flow_true(condition, context)) {
-        ch->eval(context);
-        if (context->exec_status == rt_context::on_break) {
-            context->exec_status = rt_context::normal;
+void mua::ast::while_statement::eval(runtime* rt) {
+    while (is_control_flow_true(condition, rt)) {
+        ch->eval(rt);
+        if (rt->exec_status == runtime::on_break) {
+            rt->exec_status = runtime::normal;
             break;
-        } else if (context->exec_status == rt_context::on_return) {
+        } else if (rt->exec_status == runtime::on_return) {
             break;
         }
     }
 }
 
-void mua::ast::repeat_statement::eval(rt_context* context) {
+void mua::ast::repeat_statement::eval(runtime* rt) {
     do {
-        ch->eval(context);
-        if (context->exec_status == rt_context::on_break) {
-            context->exec_status = rt_context::normal;
+        ch->eval(rt);
+        if (rt->exec_status == runtime::on_break) {
+            rt->exec_status = runtime::normal;
             break;
-        } else if (context->exec_status == rt_context::on_return) {
+        } else if (rt->exec_status == runtime::on_return) {
             break;
         }
-    } while (is_control_flow_true(condition, context));
+    } while (is_control_flow_true(condition, rt));
 }
 
-void mua::ast::for_statement::eval(rt_context* context) {
-    auto obegin = begin->eval(context);
-    auto ostep = step ? step->eval(context) : new number(1);
-    auto oend = end->eval(context);
+void mua::ast::for_statement::eval(runtime* rt) {
+    auto obegin = begin->eval(rt);
+    auto ostep = step ? step->eval(rt) : new number(1);
+    auto oend = end->eval(rt);
 
     auto vbegin = libiary_functions::tonumber(obegin);
     auto vstep = static_cast<number*>(libiary_functions::tonumber(ostep));
@@ -91,8 +91,8 @@ void mua::ast::for_statement::eval(rt_context* context) {
     delete ostep;
     delete oend;
 
-    context->alloc_local_varible(loop_var);
-    context->set_local_varible(loop_var, vbegin);
+    rt->alloc_local_varible(loop_var);
+    rt->set_local_varible(loop_var, vbegin);
 
     std::shared_ptr<binop> condition;
     if (vstep->value > 0) {
@@ -113,33 +113,33 @@ void mua::ast::for_statement::eval(rt_context* context) {
     delete vstep;
     delete vend;
 
-    while (is_control_flow_true(condition, context)) {
-        ch->eval(context);
-        if (context->exec_status == rt_context::on_break) {
-            context->exec_status = rt_context::normal;
+    while (is_control_flow_true(condition, rt)) {
+        ch->eval(rt);
+        if (rt->exec_status == runtime::on_break) {
+            rt->exec_status = runtime::normal;
             break;
-        } else if (context->exec_status == rt_context::on_return) {
+        } else if (rt->exec_status == runtime::on_return) {
             break;
         }
-        step->eval(context);
+        step->eval(rt);
     }
 }
 
-void mua::ast::generic_for_statement::eval(rt_context* context) {
-    context->alloc_local_varible(loop_var);
-    auto obj = range->eval(context);
+void mua::ast::generic_for_statement::eval(runtime* rt) {
+    rt->alloc_local_varible(loop_var);
+    auto obj = range->eval(rt);
     assert(obj->get_typeid() == ITERATOR);
     auto it = static_cast<iterator*>(obj);
     while (!it->is_end()) {
         auto val = it->get();
-        context->set_local_varible(loop_var, val);
+        rt->set_local_varible(loop_var, val);
         delete val;
 
-        ch->eval(context);
-        if (context->exec_status == rt_context::on_break) {
-            context->exec_status = rt_context::normal;
+        ch->eval(rt);
+        if (rt->exec_status == runtime::on_break) {
+            rt->exec_status = runtime::normal;
             break;
-        } else if (context->exec_status == rt_context::on_return) {
+        } else if (rt->exec_status == runtime::on_return) {
             break;
         }
     }
@@ -147,29 +147,30 @@ void mua::ast::generic_for_statement::eval(rt_context* context) {
 }
 
 object* mua::ast::ast_function::invoke(
-    rt_context* context, std::vector<const object*> params) const {
-    context->push_frame();
+    runtime* rt, std::vector<const object*> params) const {
+    rt->push_frame();
     if (!captures.empty()) {
-        assert(context == binded_context);
+        assert(rt == binded_context);
     }
     for (auto& i : captures) {
-        context->add_caputured_varible(i.first, i.second);
+        rt->add_caputured_varible(i.first, i.second);
     }
     for (int i = 0; i < param_name.size(); i++) {
+        rt->alloc_local_varible(param_name[i]);
         if (i < params.size()) {
-            context->set_local_varible(param_name[i], params[i]);
+            rt->set_local_varible(param_name[i], params[i]);
         } else {
-            context->set_local_varible(param_name[i], &nil());
+            rt->set_local_varible(param_name[i], &nil());
         }
     }
-    ch->eval(context);
-    context->exec_status = rt_context::normal;
-    context->pop_frame();
-    if (context->return_value == nullptr) {
+    ch->eval(rt);
+    rt->exec_status = runtime::normal;
+    rt->pop_frame();
+    if (rt->return_value == nullptr) {
         return new nil();
     } else {
-        auto val = context->return_value;
-        context->return_value = nullptr;
+        auto val = rt->return_value;
+        rt->return_value = nullptr;
         return val;
     }
 }
@@ -180,17 +181,30 @@ mua::ast::ast_function::~ast_function() {
     }
 }
 
-object* mua::ast::lambda_expression::eval(rt_context* context) {
+object* mua::ast::lambda_expression::eval(runtime* rt) {
     auto res = new ast_function();
-    res->binded_context = context;
+    res->binded_context = rt;
     for (auto& i : captures) {
-        res->captures[i] = context->get_varible_sid(i);
+        res->captures[i] = rt->get_varible_sid(i);
+        rt->create_storage_reference(res->captures[i]);
     }
     res->param_name = param_name;
     res->ch = ch;
     return new function_pointer(res);
 }
 
-void mua::ast::varible_declaration::eval(rt_context* context) {
-    context->alloc_local_varible(vid);
+void mua::ast::varible_declaration::eval(runtime* rt) {
+    if (is_local_function) {
+        rt->alloc_local_varible(vid);
+        auto v = val->eval(rt);
+        rt->set_local_varible(vid, v);
+        delete v;
+    } else if (val) {
+        auto v = val->eval(rt);
+        rt->alloc_local_varible(vid);
+        rt->set_local_varible(vid, v);
+        delete v;
+    } else {
+        rt->alloc_local_varible(vid);
+    }
 }

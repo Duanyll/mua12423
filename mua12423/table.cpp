@@ -1,6 +1,7 @@
 #include "table.h"
-#include <iostream>
+
 #include <cassert>
+#include <iostream>
 #include <vector>
 using namespace mua::types;
 
@@ -103,6 +104,7 @@ mua::types::table::~table() {
     }
 }
 
+#ifdef _DEBUG
 void mua::types::test_table() {
     table tab;
     auto num1 = new number(1);
@@ -125,8 +127,9 @@ void mua::types::test_table() {
     tab.set_copy(num3, num1);
     assert(tab.get_copy(num3)->equal_to(num1));
 
-	tab.set_copy(num2, str1);
+    tab.set_copy(num2, str1);
     assert(tab.size() == 3);
 
-	std::clog << "Table test passed." << std::endl;
+    std::clog << "Table test passed." << std::endl;
 }
+#endif  // _DEBUG

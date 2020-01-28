@@ -1,9 +1,11 @@
 #include "library_functions.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <regex>
 #include <vector>
+
 #include "utils.h"
 using namespace mua::types;
 
@@ -21,7 +23,7 @@ object* mua::libiary_functions::tonumber(const object* obj) {
         return new number(std::atof(str.c_str()));
     } else {
         return new nil();
-	}
+    }
 }
 
 object* mua::libiary_functions::tostring(const object* obj) {
@@ -72,7 +74,7 @@ object* mua::libiary_functions::string_rep(const object* s, const object* n) {
 }
 
 object* mua::libiary_functions::string_sub(const object* s, const object* i,
-                                            const object* j) {
+                                           const object* j) {
     if (s->get_typeid() != STRING) return new nil();
     if (i->get_typeid() != NUMBER) return new nil();
     if (j->get_typeid() != NUMBER && j->get_typeid() != NIL) return new nil();
@@ -90,7 +92,7 @@ object* mua::libiary_functions::string_sub(const object* s, const object* i,
 }
 
 object* mua::libiary_functions::table_concat(const object* t,
-                                              const object* sep) {
+                                             const object* sep) {
     if (t->get_typeid() != TABLE) return new nil();
     if (sep->get_typeid() != NIL && sep->get_typeid() != STRING)
         return new nil();
@@ -111,10 +113,10 @@ object* mua::libiary_functions::table_concat(const object* t,
     return new string(res);
 }
 
-object* mua::libiary_functions::pairs(const object* t) { 
+object* mua::libiary_functions::pairs(const object* t) {
     if (t->get_typeid() != TABLE) return new nil();
     auto val = static_cast<const table_pointer*>(t)->ptr;
-    return new iterator_pairs(val); 
+    return new iterator_pairs(val);
 }
 
 object* mua::libiary_functions::ipairs(const object* t) {
@@ -142,7 +144,7 @@ bool default_sort_comp(const object* a, const object* b) {
         return a->get_typeid() < b->get_typeid();
     }
 }
-object* native_sort_function::invoke(rt_context* context,
+object* native_sort_function::invoke(runtime* rt,
                                      std::vector<const object*> params) const {
     if (params.empty()) return new nil();
     auto t = params[0];
@@ -154,7 +156,7 @@ object* native_sort_function::invoke(rt_context* context,
     } else {
         auto fun = static_cast<const function_pointer*>(params[1])->ptr;
         comp_func = [&](const object* a, const object* b) -> bool {
-            auto res = fun->invoke(context, {a, b});
+            auto res = fun->invoke(rt, {a, b});
             if (res->equal_to(&boolean(true))) {
                 delete res;
                 return true;
@@ -209,38 +211,39 @@ object* mua::libiary_functions::math::max(const object* a, const object* b) {
     return default_sort_comp(a, b) ? b->clone() : a->clone();
 }
 
+#ifdef _DEBUG
 void mua::libiary_functions::test_libirary_function() {
     assert(tonumber(&string("1.2345"))->equal_to(&number(1.2345)));
     assert(tonumber(&string("1.2345aa"))->equal_to(&nil()));
 
     assert(tostring(&number(1.23))->equal_to(&string("1.23")));
 
-	assert(string_sub(&string("abcdef"), &number(1), &number(3))
+    assert(string_sub(&string("abcdef"), &number(1), &number(3))
                ->equal_to(&string("abc")));
     assert(string_sub(&string("abcdef"), &number(-3), &nil())
                ->equal_to(&string("def")));
     assert(string_sub(&string("abcdef"), &number(2), &number(-2))
-                   ->equal_to(&string("bcde")));
+               ->equal_to(&string("bcde")));
 
-	types::table tab;
+    types::table tab;
     tab.set_copy(&number(1), &string("2"));
     tab.set_copy(&number(2), &string("5"));
     tab.set_copy(&number(3), &string("1"));
     tab.set_copy(&number(4), &string("3"));
     tab.set_copy(&number(5), &string("4"));
 
-	assert(table_concat(&table_pointer(&tab, false), &string(","))
+    assert(table_concat(&table_pointer(&tab, false), &string(","))
                ->equal_to(&string("2,5,1,3,4")));
 
     native_sort_function().invoke(
-            nullptr, {(object*)&table_pointer(&tab, false), (object*)&nil()});
+        nullptr, {(object*)&table_pointer(&tab, false), (object*)&nil()});
     for (int i = 1; i < 5; i++) {
-        std::string a =
-            static_cast<const string*>(tab.get(&number(i)))->value;
+        std::string a = static_cast<const string*>(tab.get(&number(i)))->value;
         std::string b =
             static_cast<const string*>(tab.get(&number(i + 1)))->value;
         assert(a <= b);
-	}
+    }
 
     std::clog << "Library function test passed." << std::endl;
 }
+#endif  // _DEBUG

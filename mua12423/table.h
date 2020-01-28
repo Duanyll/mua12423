@@ -1,6 +1,7 @@
 #pragma once
-#include <unordered_map>
 #include <initializer_list>
+#include <unordered_map>
+
 #include "basic_types.h"
 
 namespace mua {
@@ -51,8 +52,10 @@ struct iterator : public table_pointer {
 };
 
 struct iterator_pairs : public iterator {
-    table::store_type::iterator it; 
-    inline iterator_pairs(table* tab) : iterator(tab) { it = tab->store.begin(); }
+    table::store_type::iterator it;
+    inline iterator_pairs(table* tab) : iterator(tab) {
+        it = tab->store.begin();
+    }
     inline object* clone() const { return new iterator_pairs(*this); }
     inline bool is_end() { return it == ptr->store.end(); }
     inline object* get() {
@@ -77,6 +80,5 @@ struct iterator_ipairs : public iterator {
 #ifdef _DEBUG
 void test_table();
 #endif  // _DEBUG
-
 }  // namespace types
 }  // namespace mua

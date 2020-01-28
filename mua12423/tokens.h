@@ -3,9 +3,7 @@
 #include <string>
 
 namespace mua {
-
 namespace lexer {
-
 enum class token_type {
     UNKNOWN,
     RESERVED,
@@ -23,10 +21,8 @@ struct token {
     inline virtual token_type get_type() const = 0;
     inline virtual ~token() {}
 
-    inline std::string get_orig_content() const { return orig_content; }
-    inline virtual void set_orig_content(const std::string& str) {
-        orig_content = str;
-    }
+    inline std::string get_orig() const { return orig_content; }
+    inline virtual void set_orig(const std::string& str) { orig_content = str; }
 
     inline bool operator==(const std::string& a) const {
         return orig_content == a;
@@ -46,7 +42,6 @@ const std::string symbols[] = {"+", "-", "*",  "/",  "%",  "^", "#",  "==", "=",
                                "[", "]", ";",  ":",  ",",  ".", "..", "..."};
 
 namespace tokens {
-
 struct reserved : public token {
     inline std::string get_token_name() const { return "RESERVED"; }
     inline virtual token_type get_type() const { return token_type::RESERVED; }
@@ -61,8 +56,8 @@ struct reserved : public token {
 struct number : public token {
     inline std::string get_token_name() const { return "NUMBER"; }
     inline virtual token_type get_type() const { return token_type::NUMBER; }
-    inline void set_orig_content(const std::string& x) {
-        token::set_orig_content(x);
+    inline void set_orig(const std::string& x) {
+        token::set_orig(x);
         value = std::atof(orig_content.c_str());
     }
     double value = 0;
@@ -72,8 +67,8 @@ struct string : public token {
     inline std::string get_token_name() const { return "STRING"; }
     inline virtual token_type get_type() const { return token_type::STRING; }
     std::string value;
-    inline void set_orig_content(const std::string& x) {
-        token::set_orig_content(x);
+    inline void set_orig(const std::string& x) {
+        token::set_orig(x);
         value = "";
         for (size_t i = 1; i < orig_content.length() - 1; i++) {
             if (orig_content[i - 1] == '\\') {
@@ -113,7 +108,7 @@ struct name : public token {
 };
 
 struct eol : public token {
-    inline eol() : token() { set_orig_content("\n"); }
+    inline eol() : token() { set_orig("\n"); }
     inline virtual token_type get_type() const { return token_type::EOL; }
     inline std::string get_token_name() const { return "EOL"; }
 };
@@ -122,9 +117,6 @@ struct comment : public token {
     inline virtual token_type get_type() const { return token_type::COMMENT; }
     inline std::string get_token_name() const { return "COMMENT"; }
 };
-
 }  // namespace tokens
-
 }  // namespace lexer
-
 }  // namespace mua

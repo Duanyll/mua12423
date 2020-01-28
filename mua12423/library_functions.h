@@ -21,7 +21,7 @@ object* ipairs(const object* t);
 
 class native_sort_function : public function {
    public:
-    virtual object* invoke(rt_context* context,
+    virtual object* invoke(runtime* rt,
                            std::vector<const object*> params) const;
 };
 
@@ -30,7 +30,7 @@ class native_math_function1 : public function {
     double (*fun)(double);
 
    public:
-    inline virtual object* invoke(rt_context* context,
+    inline virtual object* invoke(runtime* rt,
                                   std::vector<const object*> params) const {
         if (params.size() < 1) return new nil();
         if (params[0]->get_typeid() != NUMBER) return new nil();
@@ -59,6 +59,5 @@ object* max(const object* a, const object* b);
 #ifdef _DEBUG
 void test_libirary_function();
 #endif  // _DEBUG
-
 }  // namespace libiary_functions
 }  // namespace mua

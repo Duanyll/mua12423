@@ -27,7 +27,7 @@ int main() {
 #ifdef _DEBUG
     // do_all_test();
 #endif  // _DEBUG
-    solution_uva12422().run();
+    repl().run();
     // test_lexer();
 }
 

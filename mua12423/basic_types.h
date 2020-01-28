@@ -11,7 +11,7 @@ enum predefined_typeid {
     NIL,
     TABLE,
     FUNCTION,
-    ITERATOR // 由于没有实现函数的多返回值, 使用 ITERATOR 类型处理 table 的迭代
+    ITERATOR  // 由于没有实现函数的多返回值, 使用 ITERATOR 类型处理 table 的迭代
 };
 
 struct object {
@@ -86,9 +86,11 @@ struct managed_pointer : public object {
 #endif
     }
     inline T& operator->() const { return *ptr; }
-    inline object* clone() const { return new managed_pointer<T, id>(ptr, auto_delete); }
-    inline ~managed_pointer() { 
-        ptr->reference_count--; 
+    inline object* clone() const {
+        return new managed_pointer<T, id>(ptr, auto_delete);
+    }
+    inline ~managed_pointer() {
+        ptr->reference_count--;
         if (auto_delete && ptr->reference_count == 0) {
             delete ptr;
         }

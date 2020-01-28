@@ -10,13 +10,12 @@ namespace mua {
 using namespace mua::types;
 typedef size_t local_var_id;
 typedef size_t storage_id;
-class rt_context {
+class runtime {
     table* global_varibles = nullptr;
 
     struct varible_storge {
         int reference_count = 1;
-        const object* obj = new nil();
-        ~varible_storge() { delete obj; }
+        const object* obj = nullptr;
     };
 
     storage_id next_sid = 0;
@@ -28,8 +27,8 @@ class rt_context {
     void init_predefined_varibles();
 
    public:
-    rt_context();
-    ~rt_context();
+    runtime();
+    ~runtime();
     void reset();
 
     object* get_global_varible(const std::string& name);
