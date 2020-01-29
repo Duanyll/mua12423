@@ -27,7 +27,11 @@ int main() {
 #ifdef _DEBUG
      do_all_test();
 #endif  // _DEBUG
+#ifdef ONLINE_JUDGE
     solution_uva12423().run();
+#else
+    repl().run();
+#endif  // ONLINE_JUDGE
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

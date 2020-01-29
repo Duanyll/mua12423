@@ -13,7 +13,7 @@ class repl {
 
    public:
     inline void reset() { rt.reset(); }
-    inline void eval(const std::string& str) {
+    inline virtual void eval(const std::string& str) {
         ast_parser p(lex(str, false));
         size_t end_pos;
         auto stat = p.parse_inner_block(0, end_pos);
@@ -74,6 +74,14 @@ class solution_uva12422 : public repl {
 
 class solution_uva12423 : public repl {
    public:
+    inline virtual void eval(const std::string& str) {
+        ast_parser p(lex(str, false));
+        size_t end_pos;
+        auto stat = p.parse_inner_block(0, end_pos);
+        stat->eval(&rt);
+        for (auto& i : p.input) delete i;
+    }
+
     inline void run() {
         int T = 0;
         std::string str;
@@ -86,6 +94,7 @@ class solution_uva12423 : public repl {
             if (x.find_first_of("-- PROGRAM") == 0) {
                 eval(str);
                 str.clear();
+                rt.reset();
                 if (T != 0) {
                     std::cout << std::endl;
                 }

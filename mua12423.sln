@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		OnlineJudge|x64 = OnlineJudge|x64
+		OnlineJudge|x86 = OnlineJudge|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -17,6 +19,10 @@ Global
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Debug|x64.Build.0 = Debug|x64
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Debug|x86.ActiveCfg = Debug|Win32
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Debug|x86.Build.0 = Debug|Win32
+		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.OnlineJudge|x64.ActiveCfg = OnlineJudge|x64
+		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.OnlineJudge|x64.Build.0 = OnlineJudge|x64
+		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.OnlineJudge|x86.ActiveCfg = OnlineJudge|Win32
+		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.OnlineJudge|x86.Build.0 = OnlineJudge|Win32
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Release|x64.ActiveCfg = Release|x64
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Release|x64.Build.0 = Release|x64
 		{6FAF81DB-82F8-48AA-A909-1E9C0C2A55DF}.Release|x86.ActiveCfg = Release|Win32

@@ -24,6 +24,7 @@ struct object {
         return b->get_typeid() == get_typeid();
     }
     inline virtual object* clone() const { return new object(); }
+    inline const object* operator&() const { return this; }
 };
 
 // 堆上分配的对象, 简单进行基于引用计数的GC
