@@ -27,7 +27,10 @@ const object* mua::types::table::get(const object* key) const {
 }
 
 void mua::types::table::set_copy(const object* key, const object* val) {
-    set(key, val->clone());
+    if (val->get_typeid() != NIL)
+        set(key, val->clone());
+    else
+        set(key, val);
 }
 
 void mua::types::table::set(const object* key, const object* val) {

@@ -18,6 +18,7 @@ class repl {
         size_t end_pos;
         auto stat = p.parse_inner_block(0, end_pos);
         stat->eval(&rt);
+        for (auto& i : p.input) delete i;
     }
 
     inline virtual void run() {

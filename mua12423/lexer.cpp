@@ -140,7 +140,7 @@ token_array mua::lexer::string_lexer::operator()(const std::string& input,
             buffer_type = UNKNOWN;
 
             //尝试创建新的token
-            if (isalpha(input[pos])) {
+            if (isalpha(input[pos]) || input[pos] == '_') {
                 buffer = input[pos];
                 buffer_type = NAME;
             } else if (isdigit(input[pos])) {

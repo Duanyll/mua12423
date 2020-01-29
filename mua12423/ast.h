@@ -32,7 +32,7 @@ typedef std::shared_ptr<lexpr> plexpr;
 class simple_constant : public expr {
    public:
     object* value;
-    inline simple_constant(const object* val) : value(val->clone()) {}
+    inline simple_constant(object* val) : value(val) {}
     inline virtual object* eval(runtime* rt) { return value->clone(); }
     ~simple_constant() { delete value; }
 };

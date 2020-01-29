@@ -7,6 +7,7 @@ object* mua::ast::member_access::eval(runtime* rt) {
         auto t = static_cast<table_pointer*>(u)->ptr;
         auto key = member_name->eval(rt);
         auto result = t->get_copy(key);
+        delete key;
         delete u;
         return result;
     } else {

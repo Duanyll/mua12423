@@ -15,8 +15,6 @@ namespace mua {
 using namespace mua::ast;
 using namespace mua::lexer;
 class ast_parser {
-    lexer::token_array input;
-
     struct term {
         bool is_opr;
         pexpr val_expr;
@@ -52,6 +50,7 @@ class ast_parser {
     std::pair<pexpr, plexpr> parse_function(size_t start_pos, size_t& end_pos);
 
    public:
+    lexer::token_array input;
     inline ast_parser(lexer::token_array in) : input(in) {
         context.push_back(frame());
         context.back().scopes.push_back(scope());
