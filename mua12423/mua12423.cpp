@@ -25,10 +25,9 @@ void do_all_test() {
 
 int main() {
 #ifdef _DEBUG
-    // do_all_test();
+     do_all_test();
 #endif  // _DEBUG
-    repl().run();
-    // test_lexer();
+    solution_uva12423().run();
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单

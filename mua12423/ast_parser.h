@@ -56,7 +56,8 @@ class ast_parser {
         context.back().scopes.push_back(scope());
     }
 
-    pstat parse_inner_block(size_t start_pos, size_t& end_pos);
+    std::shared_ptr<block_statement> parse_inner_block(size_t start_pos,
+                                                       size_t& end_pos);
     pstat parse_stat(size_t start_pos, size_t& end_pos);
 
     pexpr parse_expr(size_t start_pos, size_t& end_pos);

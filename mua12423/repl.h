@@ -17,7 +17,19 @@ class repl {
         ast_parser p(lex(str, false));
         size_t end_pos;
         auto stat = p.parse_inner_block(0, end_pos);
-        stat->eval(&rt);
+        if (stat->ch.size() == 1 &&
+            std::dynamic_pointer_cast<expr_statement>(stat->ch[0])) {
+            auto exp =
+                std::dynamic_pointer_cast<expr_statement>(stat->ch[0])->exp;
+            auto res = exp->eval(&rt);
+            if (res->get_typeid() != NIL) {
+                std::clog << "< ";
+                libiary_functions::print(res);
+            }
+            delete res;
+        } else {
+            stat->eval(&rt);
+        }
         for (auto& i : p.input) delete i;
     }
 
@@ -29,12 +41,14 @@ class repl {
         while (true) {
             std::string str, x;
             do {
+                std::clog << ">>> ";
                 std::getline(std::cin, x, '\n');
                 str.append(x);
                 str.append("\n");
             } while (!x.empty());
-            if (str == ".exit\n") break;
-            eval(str + '\n');
+            if (str == ".exit\n\n") break;
+            std::clog << std::endl;
+            eval(str);
         }
     }
 };
@@ -54,6 +68,32 @@ class solution_uva12422 : public repl {
             } else {
                 eval(str + '\n');
             }
+        }
+    }
+};
+
+class solution_uva12423 : public repl {
+   public:
+    inline void run() {
+        int T = 0;
+        std::string str;
+        while (true) {
+            std::string x;
+            if (!std::getline(std::cin, x, '\n')) {
+                eval(str);
+                return;
+            }
+            if (x.find_first_of("-- PROGRAM") == 0) {
+                eval(str);
+                str.clear();
+                if (T != 0) {
+                    std::cout << std::endl;
+                }
+                T++;
+                std::cout << "Program " << T << ":" << std::endl;
+            }
+            str.append(x);
+            str.append("\n");
         }
     }
 };

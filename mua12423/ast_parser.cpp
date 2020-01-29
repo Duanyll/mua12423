@@ -57,7 +57,8 @@ bool mua::ast_parser::find_next(const std::string& name, size_t& cur) {
     return false;
 }
 
-pstat mua::ast_parser::parse_inner_block(size_t start_pos, size_t& end_pos) {
+std::shared_ptr<block_statement> mua::ast_parser::parse_inner_block(
+    size_t start_pos, size_t& end_pos) {
     BEGIN_BUILDER(block_statement);
     while (cur < input.size()) {
         auto& t = *input[cur];
@@ -428,7 +429,8 @@ pexpr mua::ast_parser::parse_expr(size_t start_pos, size_t& end_pos) {
 
 plexpr mua::ast_parser::parse_lexpr(size_t start_pos, size_t& end_pos) {
     size_t cur = start_pos;
-    auto res = std::dynamic_pointer_cast<lexpr>(use_var(input[cur++]->get_orig()));
+    auto res =
+        std::dynamic_pointer_cast<lexpr>(use_var(input[cur++]->get_orig()));
     if (cur == input.size()) {
         END_BUILDER;
     }
