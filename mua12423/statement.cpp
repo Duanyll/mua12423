@@ -75,7 +75,7 @@ void mua::ast::repeat_statement::eval(runtime* rt) {
         } else if (rt->exec_status == runtime::on_return) {
             break;
         }
-    } while (is_control_flow_true(condition, rt));
+    } while (!is_control_flow_true(condition, rt));
 }
 
 void mua::ast::for_statement::eval(runtime* rt) {

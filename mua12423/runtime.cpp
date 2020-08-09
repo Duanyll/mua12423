@@ -7,6 +7,9 @@ using namespace mua::libiary_functions;
 using namespace mua;
 
 void mua::runtime::clear() {
+    for (auto& i : store) {
+        delete i.second.obj;
+    }
     store.clear();
     frames.clear();
 }

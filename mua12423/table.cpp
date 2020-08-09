@@ -3,6 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <cmath>
 using namespace mua::types;
 
 mua::types::table::table(

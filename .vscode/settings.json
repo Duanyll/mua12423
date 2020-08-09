@@ -1,6 +1,8 @@
 {
     "files.associations": {
         ".clang-format": "yaml",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "cmath": "cpp",
+        "unordered_map": "cpp"
     }
 }

@@ -75,6 +75,7 @@ std::shared_ptr<block_statement> mua::ast_parser::parse_inner_block(
             break;
         } else if (t == "break") {
             res->last_stat = block_statement::break_stat;
+            cur++;
             break;
         }
         res->ch.push_back(parse_stat(cur, cur));
@@ -177,7 +178,7 @@ pstat mua::ast_parser::parse_local(size_t start_pos, size_t& end_pos) {
     if (find_next("function", cur)) {
         res->is_local_function = true;
         res->vid = declare_local_var(input[cur + 1]->get_orig());
-        res->val = parse_function(cur, cur).first;
+        res->val = parse_function(cur - 1, cur).first;
     } else {
         auto name = input[cur++]->get_orig();
         if (find_next("=", cur)) {

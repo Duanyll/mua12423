@@ -69,7 +69,7 @@ template <class T, predefined_typeid id>
 struct managed_pointer : public object {
     T* ptr;
     bool auto_delete;
-    inline constexpr managed_pointer(T* p, bool should_auto_delete = true)
+    inline managed_pointer(T* p, bool should_auto_delete = true)
         : ptr(p), auto_delete(should_auto_delete) {
         p->reference_count++;
     }

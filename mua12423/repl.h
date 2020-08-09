@@ -89,15 +89,14 @@ class solution_uva12423 : public repl {
             std::string x;
             if (!std::getline(std::cin, x, '\n')) {
                 eval(str);
+                std::cout << std::endl;
                 return;
             }
-            if (x.find_first_of("-- PROGRAM") == 0) {
+            if (x.find_first_of("-- PROGRAM") == 0 || x.find_first_of("--PROGRAM")) {
                 eval(str);
+                std::cout << std::endl;
                 str.clear();
                 rt.reset();
-                if (T != 0) {
-                    std::cout << std::endl;
-                }
                 T++;
                 std::cout << "Program " << T << ":" << std::endl;
             }
